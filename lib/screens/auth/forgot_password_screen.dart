@@ -25,10 +25,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       _isLoading = true;
     });
     // TODO - send request
-    // Navigator.of(context).pushReplacementNamed(FavoritesScreen.routeName);
-    // setState(() {
-    //   _isLoading = false;
-    // });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Not implemented'),
+        duration: Duration(seconds: 3),
+      ),
+    );
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override

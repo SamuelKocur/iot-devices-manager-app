@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:iot_devices_manager_app/models/requests/auth.dart';
 import 'package:iot_devices_manager_app/screens/auth/login_screen.dart';
-import 'package:iot_devices_manager_app/screens/favorites_screen.dart';
 import 'package:iot_devices_manager_app/widgets/auht_or_divider.dart';
+import 'package:provider/provider.dart';
+
+import '../../models/exceptions/http_exception.dart';
+import '../../providers/auth.dart';
+import '../../widgets/common/error_dialog.dart';
 
 class RegisterScreen extends StatefulWidget {
   static const routeName = '/sign-up';
@@ -14,6 +19,7 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey();
+  final _registerRequest = RegisterRequest();
   final _passwordController = TextEditingController();
   var _showPassword = false;
   var _showConfirmPassword = false;
@@ -29,8 +35,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
     setState(() {
       _isLoading = true;
     });
-    // TODO - send request
-    Navigator.of(context).pushReplacementNamed(FavoritesScreen.routeName);
+    try {
+      await Provider.of<Auth>(context, listen: false).register(_registerRequest);
+    } on HttpException catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.toString()),
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    } catch (error) {
+      showDialog(
+        context: context,
+        builder: (ctx) => const ErrorDialog(
+            'Could not create a new account for you. Please try again later.'
+        ),
+      );
+    }
     setState(() {
       _isLoading = false;
     });
@@ -63,6 +84,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
               }
               return null;
             },
+            onSaved: (value) {
+              _registerRequest.firstName = value;
+            },
           ),
           const SizedBox(
             height: 16,
@@ -77,6 +101,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
               }
               return null;
             },
+            onSaved: (value) {
+              _registerRequest.lastName = value;
+            },
           ),
           const SizedBox(
             height: 16,
@@ -90,6 +117,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 return 'Please enter your email';
               }
               return null;
+            },
+            onSaved: (value) {
+              _registerRequest.email = value;
             },
           ),
           const SizedBox(
@@ -112,6 +142,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
             ),
             validator: _validatePassword,
+            onSaved: (value) {
+              _registerRequest.password1 = value;
+            },
           ),
           const SizedBox(
             height: 16,
@@ -139,6 +172,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 return 'Passwords do not match!';
               }
               return null;
+            },
+            onSaved: (value) {
+              _registerRequest.password2 = value;
             },
           ),
         ],

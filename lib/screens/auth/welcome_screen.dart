@@ -84,7 +84,9 @@ class WelcomeScreen extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(),
+            const SizedBox(
+              height: 20,
+            ),
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pushNamed(LoginScreen.routeName);
@@ -98,7 +100,6 @@ class WelcomeScreen extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(),
           ],
         ),
       ),

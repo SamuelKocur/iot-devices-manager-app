@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:iot_devices_manager_app/models/requests/auth.dart';
+import 'package:provider/provider.dart';
+
 import 'package:iot_devices_manager_app/screens/auth/forgot_password_screen.dart';
 import 'package:iot_devices_manager_app/screens/auth/register_screen.dart';
 import 'package:iot_devices_manager_app/widgets/auht_or_divider.dart';
+
+import '../../models/exceptions/http_exception.dart';
+import '../../providers/auth.dart';
+import '../../widgets/common/error_dialog.dart';
 
 class LoginScreen extends StatefulWidget {
   static const routeName = '/login';
@@ -14,6 +21,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey();
+  final _loginRequest = LoginRequest();
   var _showPassword = false;
   var _isLoading = false;
 
@@ -25,11 +33,26 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       _isLoading = true;
     });
-    // TODO - send request
-    // Navigator.of(context).pushReplacementNamed(FavoritesScreen.routeName);
-    // setState(() {
-    //   _isLoading = false;
-    // });
+    try {
+      await Provider.of<Auth>(context, listen: false).login(_loginRequest);
+    } on HttpException catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.toString()),
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    } catch (error) {
+      showDialog(
+        context: context,
+        builder: (ctx) => const ErrorDialog(
+            'Could not authenticate you. Please try again later.'
+        ),
+      );
+    }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -40,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Container(
             constraints: const BoxConstraints(maxWidth: 500),
             width: double.infinity,
-            padding: const EdgeInsets.all(15),
+            margin: const EdgeInsets.all(15),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,6 +99,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           }
                           return null;
                         },
+                        onSaved: (value) {
+                          _loginRequest.email = value;
+                        },
                       ),
                       const SizedBox(
                         height: 16,
@@ -100,6 +126,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             return 'Please enter your password ';
                           }
                           return null;
+                        },
+                        onSaved: (value) {
+                          _loginRequest.password = value;
                         },
                       ),
                     ],
