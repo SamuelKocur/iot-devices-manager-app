@@ -25,7 +25,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   var _showConfirmPassword = false;
   var _isLoading = false;
   final _passwordRegExp =
-      RegExp(r'^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
+      RegExp(r'^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!@#$&*~]).{8,}$');
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) {
@@ -216,16 +216,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(
                   height: 16,
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(left: 3),
+                Padding(
+                  padding: const EdgeInsets.only(left: 3),
                   child: Text.rich(
                     TextSpan(
                       text: 'By selecting ',
-                      children: [
+                      style: Theme.of(context).textTheme.bodyText1,
+                      children: const [
                         TextSpan(
                           text: 'Create Account ',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
+                            color: Colors.black,
                           ),
                         ),
                         TextSpan(

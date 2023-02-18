@@ -66,20 +66,39 @@ class _LoginScreenState extends State<LoginScreen> {
             margin: const EdgeInsets.all(15),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Welcome back'.toUpperCase(),
-                  style: Theme.of(context).textTheme.headline1,
+                Container(
+                  width: 75,
+                  height: 75,
+                  padding: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    borderRadius:
+                    const BorderRadius.all(Radius.circular(20)),
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  child: Image.asset(
+                    'assets/images/logo.png',
+                    fit: BoxFit.cover,
+                    alignment: Alignment.center,
+                    repeat: ImageRepeat.noRepeat,
+                  ),
+                ),
+                const Text(
+                  'Smart-IoT',
+                  style: TextStyle(
+                    fontSize: 42,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
                 const SizedBox(
                   height: 3,
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 3),
+                  padding: const EdgeInsets.only(left: 20),
                   child: Text(
-                    'Login to your account',
+                    'Control all your smart devices, from anywhere and anytime.',
                     style: Theme.of(context).textTheme.bodyText1,
+                    textAlign: TextAlign.center,
                   ),
                 ),
                 const SizedBox(

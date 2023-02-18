@@ -6,11 +6,10 @@ import 'package:iot_devices_manager_app/screens/auth/login_screen.dart';
 import 'package:iot_devices_manager_app/screens/auth/register_screen.dart';
 import 'package:iot_devices_manager_app/screens/change_password_screen.dart';
 import 'package:iot_devices_manager_app/screens/device_detail_screen.dart';
-import 'package:iot_devices_manager_app/screens/devices_screen.dart';
-import 'package:iot_devices_manager_app/screens/favorites_screen.dart';
+import 'package:iot_devices_manager_app/screens/home_screen.dart';
 import 'package:iot_devices_manager_app/screens/locations_detail_screen.dart';
-import 'package:iot_devices_manager_app/screens/locations_screen.dart';
 import 'package:iot_devices_manager_app/screens/splash_screen.dart';
+import 'package:iot_devices_manager_app/themes/light/bar_theme.dart';
 import 'package:iot_devices_manager_app/themes/light/elevated_button_theme.dart';
 import 'package:iot_devices_manager_app/themes/light/input_decoretion_theme.dart';
 import 'package:iot_devices_manager_app/themes/light/text_button_theme.dart';
@@ -41,35 +40,25 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             colorScheme: const ColorScheme.light().copyWith(
               primary: const Color.fromRGBO(42, 179, 129, 1),
-              secondary: Colors.red,
+              // secondary: const Color.fromRGBO(247, 247, 247, 1),
+              background: const Color.fromRGBO(247, 247, 247, 1),
             ),
             fontFamily: 'Inter',
             elevatedButtonTheme: CustomElevatedButtonTheme(),
             textButtonTheme: CustomTextButtonTheme(),
             textTheme: CustomTextTheme.themeData,
             inputDecorationTheme: CustomInputDecorationTheme.themeData,
-            appBarTheme: const AppBarTheme(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
-            ),
-            tabBarTheme: const TabBarTheme(
-              labelColor: Colors.black,
-              unselectedLabelColor: Colors.grey,
-              indicator: UnderlineTabIndicator(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-              indicatorSize: TabBarIndicatorSize.tab,
-              labelPadding: EdgeInsets.all(5),
-            ),
+            appBarTheme: CustomAppBarTheme.themeData,
+            tabBarTheme: CustomTabBarTheme.themeData,
           ),
           home: auth.isLoggedIn
-              ? const FavoritesScreen()
+              ? const HomeScreen()
               : FutureBuilder(
                   future: auth.isAuth,
                   builder: (ctx, authSnapshot) {
                     if (authSnapshot.hasData) {
                       if (authSnapshot.data == true) {
-                        return const FavoritesScreen();
+                        return const HomeScreen();
                       }
                       return FutureBuilder(
                         future: auth.tryAutoLogin(),
@@ -77,7 +66,7 @@ class MyApp extends StatelessWidget {
                             authResultSnapshot.connectionState ==
                                     ConnectionState.waiting
                                 ? const SplashScreen()
-                                : const WelcomeScreen(),
+                                : const LoginScreen(),
                       );
                     } else {
                       return const SplashScreen();
@@ -90,10 +79,8 @@ class MyApp extends StatelessWidget {
             RegisterScreen.routeName: (ctx) => const RegisterScreen(),
             ForgotPasswordScreen.routeName: (ctx) => const ForgotPasswordScreen(),
             ChangePasswordScreen.routeName: (ctx) => const ChangePasswordScreen(),
-            DevicesScreen.routeName: (ctx) => const DevicesScreen(),
+            HomeScreen.routeName: (ctx) => const HomeScreen(),
             DeviceDetailScreen.routeName: (ctx) => const DeviceDetailScreen(),
-            FavoritesScreen.routeName: (ctx) => const FavoritesScreen(),
-            LocationsScreen.routeName: (ctx) => const LocationsScreen(),
             LocationDetailScreen.routeName: (ctx) => const LocationDetailScreen(),
           },
         ),
