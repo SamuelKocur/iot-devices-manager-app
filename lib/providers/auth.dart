@@ -3,11 +3,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/exceptions/http_exception.dart';
 import '../models/requests/auth.dart';
 import '../models/responses/auth.dart';
+import '../storage/storage_helper.dart';
 
 // const baseUrl = 'http://192.168.15.30:8000/api';
 const baseUrl = 'http://192.168.68.114:8000/api';
@@ -40,6 +40,10 @@ class Auth with ChangeNotifier {
 
   String? get email {
     return _email;
+  }
+
+  String? get fullName {
+    return _fullName;
   }
 
   Map<String, String> get requestHeader => {
@@ -92,9 +96,9 @@ class Auth with ChangeNotifier {
 
       _autoLogout();
       notifyListeners();
-      print('autheticate out $_isLoggedIn');
-      final prefs = await SharedPreferences.getInstance();
-      prefs.setString('userData', json.encode(authResponse.toJson()));
+
+      final storageHelper = await _getStorageHelper();
+      storageHelper.setValue('userData', json.encode(authResponse.toJson()));
     } catch (error) {
       rethrow;
     }
@@ -111,12 +115,12 @@ class Auth with ChangeNotifier {
   }
 
   Future<bool> tryAutoLogin() async {
-    final prefs = await SharedPreferences.getInstance();
+    final storageHelper = await _getStorageHelper();
 
-    if (!prefs.containsKey('userData')) {
+    if (!storageHelper.containsKey('userData')) {
       return false;
     }
-    final extractedUserData = AuthDataResponse.fromJson(json.decode(prefs.getString('userData')!));
+    final extractedUserData = AuthDataResponse.fromJson(json.decode(storageHelper.getValue('userData')!));
     if (extractedUserData.expiryDate.isBefore(DateTime.now())) {
       return false;
     }
@@ -128,13 +132,13 @@ class Auth with ChangeNotifier {
     _expiryDate = extractedUserData.expiryDate;
 
     if (await token == null) {
-      prefs.clear();
+      storageHelper.clear();
       return false;
     }
 
     _isLoggedIn = true;
     notifyListeners();
-    print('auto login $_isLoggedIn');
+
     _autoLogout();
     return true;
   }
@@ -156,10 +160,9 @@ class Auth with ChangeNotifier {
 
     _isLoggedIn = false;
     notifyListeners();
-    print('log out $_isLoggedIn');
 
-    final prefs = await SharedPreferences.getInstance();
-    prefs.clear();
+    final storageHelper = await _getStorageHelper();
+    storageHelper.clear();
   }
 
   void _autoLogout() {
@@ -168,5 +171,11 @@ class Auth with ChangeNotifier {
     }
     final timeToExpiry = _expiryDate!.difference(DateTime.now()).inSeconds;
     _authTimer = Timer(Duration(seconds: timeToExpiry), logout);
+  }
+
+  Future<StorageHelper> _getStorageHelper() async {
+    final storageHelper = StorageHelper();
+    await storageHelper.initPrefs();
+    return storageHelper;
   }
 }
