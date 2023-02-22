@@ -31,3 +31,69 @@ class CustomElevatedButtonTheme extends ElevatedButtonThemeData {
     ),
   );
 }
+
+class SelectedTagTheme extends ElevatedButtonThemeData {
+  SelectedTagTheme() : super(
+    style: ButtonStyle(
+      backgroundColor: MaterialStateProperty.all<Color>(
+        const Color.fromRGBO(42, 179, 129, 1),
+      ),
+      padding: MaterialStateProperty.all<EdgeInsets>(
+        const EdgeInsets.symmetric(
+          vertical: 0,
+        ),
+      ),
+      textStyle: MaterialStateProperty.all<TextStyle>(
+        const TextStyle(
+          fontSize: 14,
+          letterSpacing: 0.25,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    ),
+  );
+}
+
+class UnselectedTagTheme extends ElevatedButtonThemeData {
+  UnselectedTagTheme() : super(
+    style: ButtonStyle(
+      backgroundColor: MaterialStateProperty.all<Color>(
+        const Color.fromRGBO(42, 179, 129, 0.2),
+      ),
+      padding: MaterialStateProperty.all<EdgeInsets>(
+        const EdgeInsets.symmetric(
+          vertical: 0,
+        ),
+      ),
+      textStyle: MaterialStateProperty.all<TextStyle>(
+        const TextStyle(
+          fontSize: 14,
+          letterSpacing: 0.25,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    ),
+  );
+}
+
+class WhiteButtonTheme extends ElevatedButtonThemeData {
+  WhiteButtonTheme() : super(
+    style: ButtonStyle(
+      backgroundColor: MaterialStateProperty.all<Color>(
+        const Color.fromRGBO(255, 255, 255, 1),
+      ),
+      padding: MaterialStateProperty.all<EdgeInsets>(
+        const EdgeInsets.symmetric(
+          vertical: 0,
+        ),
+      ),
+      textStyle: MaterialStateProperty.all<TextStyle>(
+        const TextStyle(
+          fontSize: 16,
+          letterSpacing: 0.25,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    ),
+  );
+}

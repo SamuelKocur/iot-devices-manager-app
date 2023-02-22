@@ -9,9 +9,11 @@ import '../models/requests/auth.dart';
 import '../models/responses/auth.dart';
 import '../storage/storage_helper.dart';
 
-// const baseUrl = 'http://192.168.15.30:8000/api';
-const baseUrl = 'http://192.168.68.114:8000/api';
-const imageUrl = 'http://10.0.2.2:8000';
+const baseUrl = 'http://192.168.15.30:8000/api';
+// const baseUrl = 'http://192.168.68.114:8000/api';
+const imageUrl = 'http://192.168.15.30:8000';
+// const baseUrl = 'http://10.0.2.2:8000/api';
+// const imageUrl = 'http://10.0.2.2:8000';
 
 class Auth with ChangeNotifier {
   static const authUrl = '$baseUrl/auth';
@@ -55,6 +57,7 @@ class Auth with ChangeNotifier {
   Future<String?> _checkTokenValidity() async {
     final url = Uri.parse('$authUrl/validate-token/');
     try {
+      _isLoggedIn = false;
       final response = await http.get(
         url,
         headers: requestHeader,
@@ -66,6 +69,7 @@ class Auth with ChangeNotifier {
     } catch (error) {
       return null;
     }
+    _isLoggedIn = true;
     return _token;
   }
 

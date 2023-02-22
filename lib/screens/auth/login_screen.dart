@@ -43,12 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       );
     } catch (error) {
-      showDialog(
-        context: context,
-        builder: (ctx) => const ErrorDialog(
-            'Could not authenticate you. Please try again later.'
-        ),
-      );
+      DialogUtils.showErrorDialog(context, 'Could not authenticate you. Please try again later.');
     }
     setState(() {
       _isLoading = false;
@@ -65,42 +60,51 @@ class _LoginScreenState extends State<LoginScreen> {
             width: double.infinity,
             margin: const EdgeInsets.all(15),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Container(
-                  width: 75,
-                  height: 75,
-                  padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                    borderRadius:
-                    const BorderRadius.all(Radius.circular(20)),
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  child: Image.asset(
-                    'assets/images/logo.png',
-                    fit: BoxFit.cover,
-                    alignment: Alignment.center,
-                    repeat: ImageRepeat.noRepeat,
-                  ),
-                ),
-                const Text(
-                  'Smart-IoT',
-                  style: TextStyle(
-                    fontSize: 42,
-                    fontWeight: FontWeight.w500,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Container(
+                      width: 70,
+                      height: 70,
+                      padding: const EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        borderRadius:
+                        const BorderRadius.all(Radius.circular(20)),
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      child: Image.asset(
+                        'assets/images/logo.png',
+                        fit: BoxFit.cover,
+                        alignment: Alignment.center,
+                        repeat: ImageRepeat.noRepeat,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    const Text(
+                      'Smart-IoT',
+                      style: TextStyle(
+                        fontSize: 48,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(
                   height: 3,
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 20),
-                  child: Text(
-                    'Control all your smart devices, from anywhere and anytime.',
-                    style: Theme.of(context).textTheme.bodyText1,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.only(left: 20),
+                //   child: Text(
+                //     'Control all your smart devices, from anywhere and anytime.',
+                //     style: Theme.of(context).textTheme.bodyText1,
+                //     textAlign: TextAlign.center,
+                //   ),
+                // ),
                 const SizedBox(
                   height: 40,
                 ),

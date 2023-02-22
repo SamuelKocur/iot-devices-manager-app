@@ -45,12 +45,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
       );
     } catch (error) {
-      showDialog(
-        context: context,
-        builder: (ctx) => const ErrorDialog(
-            'Could not create a new account for you. Please try again later.'
-        ),
-      );
+      DialogUtils.showErrorDialog(context, 'Could not create a new account for you. Please try again later.');
     }
     setState(() {
       _isLoading = false;

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:iot_devices_manager_app/providers/auth.dart';
 import 'package:iot_devices_manager_app/providers/iot.dart';
+import 'package:iot_devices_manager_app/providers/location.dart';
 import 'package:iot_devices_manager_app/screens/auth/forgot_password_screen.dart';
 import 'package:iot_devices_manager_app/screens/auth/login_screen.dart';
 import 'package:iot_devices_manager_app/screens/auth/register_screen.dart';
 import 'package:iot_devices_manager_app/screens/change_password_screen.dart';
-import 'package:iot_devices_manager_app/screens/device_detail_screen.dart';
+import 'package:iot_devices_manager_app/screens/details/device_detail_screen.dart';
 import 'package:iot_devices_manager_app/screens/home_screen.dart';
-import 'package:iot_devices_manager_app/screens/locations_detail_screen.dart';
+import 'package:iot_devices_manager_app/screens/details/locations_detail_screen.dart';
 import 'package:iot_devices_manager_app/screens/splash_screen.dart';
 import 'package:iot_devices_manager_app/themes/light/bar_theme.dart';
 import 'package:iot_devices_manager_app/themes/light/elevated_button_theme.dart';
@@ -28,19 +29,26 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<Auth>(
           create: (_) => Auth(),
         ),
-        ChangeNotifierProxyProvider<Auth, Devices>(
-            create: (ctx) => Devices({}),
-            update: (ctx, auth, previousDevices) => previousDevices ?? Devices(
+        ChangeNotifierProxyProvider<Auth, IoTDevices>(
+            create: (ctx) => IoTDevices({}),
+            update: (ctx, auth, previousDevices) => previousDevices ?? IoTDevices(
                 {})..update(auth.requestHeader)
+        ),
+        ChangeNotifierProxyProvider<Auth, Locations>(
+            create: (ctx) => Locations({}, Provider.of<IoTDevices>(ctx, listen: false)),
+            update: (ctx, auth, previousLocations) => previousLocations ?? Locations(
+                {}, Provider.of<IoTDevices>(ctx, listen: false))..update(auth.requestHeader, )
         )
       ],
       child: Consumer<Auth>(
         builder: (ctx, auth, child) => MaterialApp(
           title: 'Smart-IoT',
           theme: ThemeData(
+            // remove the animation for all IconButton widgets in the app
+            // splashColor: Colors.transparent,
+            // highlightColor: Colors.transparent,
             colorScheme: const ColorScheme.light().copyWith(
               primary: const Color.fromRGBO(42, 179, 129, 1),
-              // secondary: const Color.fromRGBO(247, 247, 247, 1),
               background: const Color.fromRGBO(247, 247, 247, 1),
             ),
             fontFamily: 'Inter',

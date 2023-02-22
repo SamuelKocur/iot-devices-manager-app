@@ -58,6 +58,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           ),
         ),
         drawer: const AppDrawer(),
+        backgroundColor: Colors.white,
         body: TabBarView(
           controller: _tabController,
           children: _tabPages,

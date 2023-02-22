@@ -31,3 +31,12 @@ class CustomTextTheme {
         ),
       );
 }
+
+class DeviceCardTextStyle {
+  static const data = TextStyle(
+    color: Colors.black,
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+    letterSpacing: 0.25,
+  );
+}

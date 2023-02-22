@@ -21,3 +21,12 @@ class ErrorDialog extends StatelessWidget {
     );
   }
 }
+
+class DialogUtils {
+  static void showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => ErrorDialog(message),
+    );
+  }
+}
