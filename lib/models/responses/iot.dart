@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:iot_devices_manager_app/common/date_format.dart';
 
 import 'package:iot_devices_manager_app/providers/auth.dart';
 
@@ -49,18 +49,51 @@ class Sensor with ChangeNotifier {
     notifyListeners();
   }
 
+  String getFormattedDate() {
+    String formattedDate = latestValue.getFormattedTimestamp();
+    return formattedDate;
+  }
+
   String getFormattedLatestValue() {
-    if (unit == 'bool') {
-      String formattedDate = latestValue.getFormattedTimestamp();
-      return formattedDate;
+    if (isBoolSensor()) {
+      return getFormattedDate();
     }
     return "${latestValue.value} ${unit?.replaceAll('Â', '')}";
+  }
+  
+  bool hasChanged(Sensor loadedSensor) {
+    bool hasChanged = false;
+    if (latestValue.value != loadedSensor.latestValue.value) {
+      latestValue.value = loadedSensor.latestValue.value;
+      hasChanged = true;
+    }
+    if (latestValue.timestamp != loadedSensor.latestValue.timestamp) {
+      latestValue.timestamp = loadedSensor.latestValue.timestamp;
+      hasChanged = true;
+    }
+    if (isFavorite != loadedSensor.isFavorite) {
+      isFavorite = loadedSensor.isFavorite;
+      hasChanged = true;
+    }
+    if (name != loadedSensor.name) {
+      name = loadedSensor.name;
+      hasChanged = true;
+    }
+    if (dateUpdated != loadedSensor.dateUpdated) {
+      dateUpdated = loadedSensor.dateUpdated;
+      hasChanged = true;
+    }
+    return hasChanged;
+  }
+
+  bool isBoolSensor() {
+    return unit == 'bool';
   }
 }
 
 class LatestValue {
-  final double value;
-  final DateTime timestamp;
+  double value;
+  DateTime timestamp;
 
   LatestValue({
     required this.value,
@@ -73,7 +106,7 @@ class LatestValue {
   );
 
   String getFormattedTimestamp() {
-    return DateFormat('E MMM d H:mm').format(timestamp);
+    return DateFormatter.dateTime(timestamp);
   }
 }
 

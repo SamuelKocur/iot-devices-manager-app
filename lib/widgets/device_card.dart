@@ -18,7 +18,7 @@ class DeviceCard extends StatelessWidget {
   }) : super(key: key);
 
   Widget _getLatestValueWidget(Sensor sensor, BuildContext context) {
-    if (sensor.unit == 'bool') {
+    if (sensor.isBoolSensor()) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -27,7 +27,7 @@ class DeviceCard extends StatelessWidget {
             style: Theme.of(context).textTheme.bodyText1,
           ),
           Text(
-            sensor.getFormattedLatestValue(),
+            sensor.getFormattedDate(),
             style: DeviceCardTextStyle.data,
           ),
         ],

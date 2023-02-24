@@ -27,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(initialIndex: 1, length: 3, vsync: this);
+    _tabController = TabController(initialIndex: 0, length: 3, vsync: this);
   }
 
   @override

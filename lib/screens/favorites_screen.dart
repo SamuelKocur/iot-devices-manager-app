@@ -27,7 +27,7 @@ class FavoritesScreen extends StatelessWidget {
         children: [
           Text(
             'You don\'t have any favorite IoT devices.',
-            style: Theme.of(context).textTheme.titleLarge,
+            style: Theme.of(context).textTheme.headline5,
           ),
           const SizedBox(
             height: 5,
@@ -49,21 +49,21 @@ class FavoritesScreen extends StatelessWidget {
     return favoriteDevices.isEmpty
         ? _noFavoriteDevices(context)
         : ListView.builder(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 15,
-              vertical: 5,
-            ),
-            itemBuilder: (ctx, index) => ChangeNotifierProvider.value(
-              value: favoriteDevices[index],
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  bottom: 10,
-                ),
-                child: DeviceCard(),
-              ),
-            ),
-            itemCount: favoriteDevices.length,
-          );
+      padding: const EdgeInsets.symmetric(
+        horizontal: 15,
+        vertical: 5,
+      ),
+      itemBuilder: (ctx, index) => ChangeNotifierProvider.value(
+        value: favoriteDevices[index],
+        child: Padding(
+          padding: const EdgeInsets.only(
+            bottom: 10,
+          ),
+          child: DeviceCard(),
+        ),
+      ),
+      itemCount: favoriteDevices.length,
+    );
     // // fetching favorites from server
     // return FutureBuilder(
     //   future: _refreshFavorites(context),

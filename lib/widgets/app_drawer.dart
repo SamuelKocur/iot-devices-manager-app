@@ -52,7 +52,7 @@ class _AppDrawerState extends State<AppDrawer> {
         ),
         title: Text(
           title,
-          style: Theme.of(context).textTheme.headline5,
+          style: Theme.of(context).textTheme.headline6,
         ),
         onTap: onTap,
         iconColor: Colors.black,

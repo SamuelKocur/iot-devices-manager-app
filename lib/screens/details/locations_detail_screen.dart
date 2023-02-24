@@ -64,7 +64,7 @@ class LocationDetailScreen extends StatelessWidget {
                       ),
                       child: Text(
                         'Sensors:',
-                        style: Theme.of(context).textTheme.headline6,
+                        style: Theme.of(context).textTheme.headline5,
                       ),
                     ),
                     Expanded(
