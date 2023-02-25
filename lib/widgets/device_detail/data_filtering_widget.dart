@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iot_devices_manager_app/models/responses/data.dart';
 import 'package:iot_devices_manager_app/themes/light/drop_down_menu.dart';
 import 'package:iot_devices_manager_app/widgets/device_detail/graph_widget.dart';
+import 'package:iot_devices_manager_app/widgets/device_detail/table_widget.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/data_filtering.dart';
@@ -22,12 +23,13 @@ class _FilterDataWidgetState extends State<FilterDataWidget> {
   String _dataRangeCurrentValue = DateRangeOptions.pastWeek.text;
   DateRange _dateRange =
       DateRangeOptions.getDateTime(DateRangeOptions.pastWeek.text);
-  List<SensorData> sensorData = [];
+  List<SensorData> _sensorData = [];
 
   Future<void> _getSensorData(BuildContext context) async {
     try {
       await Provider.of<IoTDevices>(context, listen: false)
           .fetchAndSetFavoriteIoTDevices();
+      _sensorData = dummyData;
     } catch (error) {
       DialogUtils.showErrorDialog(
           context, 'Something went wrong. Please try again later.');
@@ -110,7 +112,7 @@ class _FilterDataWidgetState extends State<FilterDataWidget> {
         Row(
           children: [
             const Text(
-              'Display data for: ',
+              'Get data for: ',
               style: TextInDetailsScreen.data,
             ),
             const SizedBox(
@@ -140,23 +142,56 @@ class _FilterDataWidgetState extends State<FilterDataWidget> {
           future: _getSensorData(context),
           builder: (ctx, snapshot) =>
               snapshot.connectionState == ConnectionState.waiting
-                  ? Center(
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          GraphWidget(
-                            sensorId: widget.sensorId,
-                            dateRange: _dateRange,
-                            sensorData: const [],
+                  ? Column(
+                    children: [
+                      Center(
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              GraphWidget(
+                                sensorId: widget.sensorId,
+                                sensorData: const [],
+                                dateRange: _dateRange,
+                              ),
+                              const CircularProgressIndicator()
+                            ],
                           ),
-                          const CircularProgressIndicator()
-                        ],
+                        ),
+                      Text(
+                        'Data:',
+                        style: Theme.of(context).textTheme.headline5,
                       ),
-                    )
-                  : GraphWidget(
-                      sensorId: widget.sensorId,
-                      dateRange: _dateRange,
-                      sensorData: dummyData,
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      TableWidget(
+                        sensorId: widget.sensorId,
+                        sensorData: const [],
+                        dateRange: _dateRange,
+                      )
+                    ],
+                  )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        GraphWidget(
+                          sensorId: widget.sensorId,
+                          sensorData: _sensorData,
+                          dateRange: _dateRange,
+                        ),
+                        Text(
+                          'Data:',
+                          style: Theme.of(context).textTheme.headline5,
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        TableWidget(
+                          sensorId: widget.sensorId,
+                          sensorData: _sensorData,
+                          dateRange: _dateRange,
+                        )
+                      ],
                     ),
         ),
       ],

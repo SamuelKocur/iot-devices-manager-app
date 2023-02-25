@@ -31,7 +31,6 @@ class LocationCard extends StatelessWidget {
       },
       child: Card(
         elevation: 0,
-        color: Theme.of(context).colorScheme.background,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),

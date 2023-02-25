@@ -42,9 +42,6 @@ class _GraphWidgetState extends State<GraphWidget> {
       children: [
         Checkbox(
           activeColor: color,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(3),
-          ),
           side: BorderSide(
             color: color,
             width: 2,
@@ -107,14 +104,12 @@ class _GraphWidgetState extends State<GraphWidget> {
 
   Widget _buildGraph() {
     return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      margin: const EdgeInsets.all(10),
+      color: Colors.white,
       child: Column(
         children: [
           const SizedBox(
-            height: 5,
+            height: 10,
           ),
           Text(
             '${DateFormatter.date(widget.dateRange.dateFrom)} - ${DateFormatter.date(widget.dateRange.dateTo)}',
@@ -169,7 +164,7 @@ class _GraphWidgetState extends State<GraphWidget> {
             zoomPanBehavior: ZoomPanBehavior(
               enablePinching: true,
               enableDoubleTapZooming: true,
-              enableSelectionZooming: true,
+              // enableSelectionZooming: true,
               maximumZoomLevel: 0.5,
             ),
           ),
@@ -189,21 +184,13 @@ class _GraphWidgetState extends State<GraphWidget> {
           height: 5,
         ),
         Card(
-          elevation: 0,
           color: Theme.of(context).colorScheme.background,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
             children: [
-              Card(
-                margin: const EdgeInsets.all(10),
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: _buildGraph(),
-              ),
+              _buildGraph(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: _getGraphCheckBoxes(),
@@ -213,10 +200,6 @@ class _GraphWidgetState extends State<GraphWidget> {
         ),
         const SizedBox(
           height: 10,
-        ),
-        Text(
-          'Data:',
-          style: Theme.of(context).textTheme.headline5,
         ),
       ],
     );

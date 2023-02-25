@@ -1,10 +1,13 @@
-class SensorData {
+import 'package:flutter/foundation.dart';
+
+class SensorData with ChangeNotifier {
   double sensorId;
   DateTime date;
   double? avgValue;
   double? minValue;
   double? maxValue;
   double? totalValue;
+  bool selected = false;
 
   SensorData({
     required this.sensorId,
@@ -26,6 +29,27 @@ class SensorData {
 }
 
 final dummyData = [
+  SensorData(
+    sensorId: 4,
+    date: DateTime.now().subtract(const Duration(days: 10)),
+    avgValue: 10,
+    minValue: 2,
+    maxValue: 14,
+  ),
+  SensorData(
+    sensorId: 4,
+    date: DateTime.now().subtract(const Duration(days: 9)),
+    avgValue: 9,
+    minValue: 3,
+    maxValue: 11,
+  ),
+  SensorData(
+    sensorId: 4,
+    date: DateTime.now().subtract(const Duration(days: 8)),
+    avgValue: 12,
+    minValue: 8,
+    maxValue: 18,
+  ),
   SensorData(
     sensorId: 4,
     date: DateTime.now().subtract(const Duration(days: 7)),

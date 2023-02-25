@@ -58,9 +58,16 @@ class Sensor with ChangeNotifier {
     if (isBoolSensor()) {
       return getFormattedDate();
     }
-    return "${latestValue.value} ${unit?.replaceAll('Â', '')}";
+    return "${latestValue.value} ${unit?.replaceAll('Â', '') ?? ""}";
   }
-  
+
+  String getUnit() {
+    if (isBoolSensor()) {
+      return "";
+    }
+    return unit?.replaceAll('Â', '') ?? "";
+  }
+
   bool hasChanged(Sensor loadedSensor) {
     bool hasChanged = false;
     if (latestValue.value != loadedSensor.latestValue.value) {

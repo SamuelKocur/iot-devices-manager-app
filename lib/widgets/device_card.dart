@@ -55,7 +55,6 @@ class DeviceCard extends StatelessWidget {
       },
       child: Card(
           elevation: 0,
-          color: Theme.of(context).colorScheme.background,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -76,7 +75,7 @@ class DeviceCard extends StatelessWidget {
                         child: IconButton(
                           enableFeedback: false,
                           onPressed: () => Provider.of<IoTDevices>(context, listen: false)
-                              .toggleFavoriteSensors(sensor),
+                              .toggleFavoriteSensors(sensor.id),
                           icon: Icon(
                             sensor.isFavorite
                                 ? Icons.favorite

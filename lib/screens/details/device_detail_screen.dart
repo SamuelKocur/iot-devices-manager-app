@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:iot_devices_manager_app/models/data_filtering.dart';
 import 'package:iot_devices_manager_app/themes/light/text_theme.dart';
 import 'package:iot_devices_manager_app/widgets/device_detail/data_filtering_widget.dart';
 import 'package:provider/provider.dart';
@@ -34,20 +33,6 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
     }
   }
 
-  List<DropdownMenuItem<String>> _dataRangeMenu() {
-    return DateRangeOptions.values
-        .map(
-          (e) => DropdownMenuItem(
-            value: e.text,
-            child: Text(
-              e.text,
-              style: Theme.of(context).textTheme.headline6,
-            ),
-          ),
-        )
-        .toList();
-  }
-
   @override
   Widget build(BuildContext context) {
     final sensorId = ModalRoute.of(context)!.settings.arguments as int;
@@ -76,7 +61,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
             builder: (ctx, sen, _) => IconButton(
               enableFeedback: false,
               onPressed: () => Provider.of<IoTDevices>(context, listen: false)
-                  .toggleFavoriteSensors(_sensor),
+                  .toggleFavoriteSensors(_sensor?.id ?? 0),
               icon: Icon(
                 _sensor?.isFavorite ?? false
                     ? Icons.favorite
@@ -88,77 +73,79 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: FutureBuilder(
-          future: _getDeviceDetail(context, sensorId),
-          builder: (ctx, snapshot) => snapshot.connectionState ==
-                  ConnectionState.waiting
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : RefreshIndicator(
-                  onRefresh: () => _getDeviceDetail(context, sensorId),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(
-                            DeviceTypes.values
-                                .firstWhere(
-                                    (element) => element.text == _sensor!.type,
-                                    orElse: () => DeviceTypes.others)
-                                .icon,
-                            color: Theme.of(context).colorScheme.primary,
-                            size: 80,
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                _sensor!.getFormattedDate(),
-                                style: TextInDetailsScreen.data,
-                              ),
-                              Text(
-                                _sensor!.getFormattedLatestValue(),
-                                style: const TextStyle(
-                                  fontSize: 50,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          const Text(
-                            'Location: ',
-                            style: TextInDetailsScreen.data,
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pushNamed(
-                                LocationDetailScreen.routeName,
-                                arguments: {
-                                  'id': _sensor?.device.location.id,
-                                  'name': _sensor?.device.location.name,
-                                },
-                              );
-                            },
-                            child: Text(
-                              _sensor?.device.location.name ?? "",
-                              style: Theme.of(context).textTheme.headline5,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: FutureBuilder(
+            future: _getDeviceDetail(context, sensorId),
+            builder: (ctx, snapshot) => snapshot.connectionState ==
+                    ConnectionState.waiting
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : RefreshIndicator(
+                    onRefresh: () => _getDeviceDetail(context, sensorId),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(
+                              DeviceTypes.values
+                                  .firstWhere(
+                                      (element) => element.text == _sensor!.type,
+                                      orElse: () => DeviceTypes.others)
+                                  .icon,
+                              color: Theme.of(context).colorScheme.primary,
+                              size: 80,
                             ),
-                          )
-                        ],
-                      ),
-                      FilterDataWidget(sensorId),
-                    ],
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  _sensor!.getFormattedDate(),
+                                  style: TextInDetailsScreen.data,
+                                ),
+                                Text(
+                                  _sensor!.getFormattedLatestValue(),
+                                  style: const TextStyle(
+                                    fontSize: 50,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            const Text(
+                              'Location: ',
+                              style: TextInDetailsScreen.data,
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pushNamed(
+                                  LocationDetailScreen.routeName,
+                                  arguments: {
+                                    'id': _sensor?.device.location.id,
+                                    'name': _sensor?.device.location.name,
+                                  },
+                                );
+                              },
+                              child: Text(
+                                _sensor?.device.location.name ?? "",
+                                style: Theme.of(context).textTheme.headline5,
+                              ),
+                            )
+                          ],
+                        ),
+                        FilterDataWidget(sensorId),
+                      ],
+                    ),
                   ),
-                ),
+          ),
         ),
       ),
     );

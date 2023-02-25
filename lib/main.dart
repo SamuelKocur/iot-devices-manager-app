@@ -11,6 +11,8 @@ import 'package:iot_devices_manager_app/screens/home_screen.dart';
 import 'package:iot_devices_manager_app/screens/details/locations_detail_screen.dart';
 import 'package:iot_devices_manager_app/screens/splash_screen.dart';
 import 'package:iot_devices_manager_app/themes/light/bar_theme.dart';
+import 'package:iot_devices_manager_app/themes/light/card_theme.dart';
+import 'package:iot_devices_manager_app/themes/light/check_box.dart';
 import 'package:iot_devices_manager_app/themes/light/elevated_button_theme.dart';
 import 'package:iot_devices_manager_app/themes/light/input_decoretion_theme.dart';
 import 'package:iot_devices_manager_app/themes/light/text_button_theme.dart';
@@ -51,6 +53,7 @@ class MyApp extends StatelessWidget {
               primary: const Color.fromRGBO(42, 179, 129, 1),
               background: const Color.fromRGBO(247, 247, 247, 1),
             ),
+            cardTheme: CustomCardThemeTheme.themeData,
             fontFamily: 'Inter',
             elevatedButtonTheme: CustomElevatedButtonTheme(),
             textButtonTheme: CustomTextButtonTheme(),
@@ -58,6 +61,7 @@ class MyApp extends StatelessWidget {
             inputDecorationTheme: CustomInputDecorationTheme.themeData,
             appBarTheme: CustomAppBarTheme.themeData,
             tabBarTheme: CustomTabBarTheme.themeData,
+            checkboxTheme: CustomCheckBoxTheme.themeData,
           ),
           home: auth.isLoggedIn
               ? const HomeScreen()

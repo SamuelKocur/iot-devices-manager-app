@@ -25,7 +25,8 @@ class _DevicesScreenState extends State<DevicesScreen> {
       await Provider.of<IoTDevices>(context, listen: false)
           .fetchAndSetIoTDevices(type: selectedTag);
     } catch (error) {
-      DialogUtils.showErrorDialog(context, 'Something went wrong. Please try again later.');
+      DialogUtils.showErrorDialog(
+          context, 'Something went wrong. Please try again later.');
     }
   }
 
@@ -77,32 +78,36 @@ class _DevicesScreenState extends State<DevicesScreen> {
         Expanded(
           child: FutureBuilder(
             future: _refreshDevices(context),
-            builder: (ctx, snapshot) => snapshot.connectionState ==
-                    ConnectionState.waiting
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : RefreshIndicator(
-                    onRefresh: () => _refreshDevices(context),
-                    child: Consumer<IoTDevices>(
-                      builder: (ctx, devicesData, _) => ListView.builder(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 15,
-                          vertical: 5,
-                        ),
-                        itemBuilder: (ctx, index) => ChangeNotifierProvider.value(
-                          value: devicesData.sensors[index],
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                              bottom: 10,
+            builder: (ctx, snapshot) =>
+                snapshot.connectionState == ConnectionState.waiting
+                    ? const Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : RefreshIndicator(
+                        onRefresh: () => _refreshDevices(context),
+                        child: Consumer<IoTDevices>(
+                          builder: (ctx, devicesData, _) => ListView.builder(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 5,
                             ),
-                            child: DeviceCard(),
+                            itemBuilder: (ctx, index) => ChangeNotifierProvider.value(
+                              value: _selectedTag == 'all'
+                                  ? devicesData.sensors[index]
+                                  : devicesData.filteredSensors[index],
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  bottom: 10,
+                                ),
+                                child: DeviceCard(),
+                              ),
+                            ),
+                            itemCount: _selectedTag == 'all'
+                                ? devicesData.sensors.length
+                                : devicesData.filteredSensors.length,
                           ),
                         ),
-                        itemCount: devicesData.sensors.length,
                       ),
-                    ),
-                  ),
           ),
         ),
       ],

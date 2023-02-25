@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -11,6 +12,7 @@ class IoTDevices with ChangeNotifier {
   Map<String, String> requestHeaders;
   List<Sensor> _cachedSensors = [];
   List<Sensor> _favoriteSensors = [];
+  List<Sensor> _filteredSensors = [];
 
   IoTDevices(this.requestHeaders);
 
@@ -24,6 +26,10 @@ class IoTDevices with ChangeNotifier {
 
   List<Sensor> get favoriteSensors {
     return _cachedSensors.where((sensor) => sensor.isFavorite).toList();
+  }
+
+  List<Sensor> get filteredSensors {
+    return [..._filteredSensors];
   }
 
   Sensor getSensorById(int sensorId) {
@@ -65,9 +71,13 @@ class IoTDevices with ChangeNotifier {
       final responseData = (jsonDecode(response.body) ?? <String, dynamic>{}) as Map<String, dynamic>;
       if (response.statusCode == 200) {
         final List<Sensor> loadedSensors = List<Sensor>.from(responseData["sensors"].map((sensor) => Sensor.fromJson(sensor)));
-        _cachedSensors = loadedSensors;
-        notifyListeners();
+        if (type != null) {
+          _filteredSensors = loadedSensors;
+        } else {
+          _cachedSensors = loadedSensors;
+        }
       }
+      notifyListeners();
     } catch (error) {
       rethrow;
     }
@@ -89,18 +99,15 @@ class IoTDevices with ChangeNotifier {
     }
   }
 
-  Future<bool> toggleFavoriteSensors(Sensor? sensor) async {
-    if (sensor == null) {
-      return false;
-    }
-    sensor.toggleFavorite();
+  Future<bool> toggleFavoriteSensors(int sensorId) async {
+    _toggleInAllLists(sensorId);
     notifyListeners();
 
-    final url = Uri.parse('$sensorsUrl/${sensor.id}/toggle-favorite/');
+    final url = Uri.parse('$sensorsUrl/$sensorId/toggle-favorite/');
     try {
       final response = await http.post(url, headers: requestHeaders);
       if (response.statusCode != 201 && response.statusCode != 204) {
-        sensor.toggleFavorite();
+        _toggleInAllLists(sensorId);
         notifyListeners();
         return false;
       }
@@ -108,5 +115,10 @@ class IoTDevices with ChangeNotifier {
       return false;
     }
     return true;
+  }
+
+  void _toggleInAllLists(int sensorId) {
+    _cachedSensors.firstWhereOrNull((element) => element.id == sensorId)?.toggleFavorite();
+    _filteredSensors.firstWhereOrNull((element) => element.id == sensorId)?.toggleFavorite();
   }
 }
