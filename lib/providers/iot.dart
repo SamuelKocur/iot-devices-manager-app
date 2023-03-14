@@ -8,7 +8,7 @@ import '../models/responses/iot.dart';
 import 'auth.dart';
 
 class IoTDevices with ChangeNotifier {
-  static const sensorsUrl = '$baseUrl/sensors';
+  static const sensorsUrl = '$baseApiUrl/sensors';
   Map<String, String> requestHeaders;
   List<Sensor> _cachedSensors = [];
   List<Sensor> _favoriteSensors = [];

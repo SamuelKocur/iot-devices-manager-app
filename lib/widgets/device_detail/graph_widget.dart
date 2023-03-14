@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:iot_devices_manager_app/models/responses/data.dart';
+import 'package:iot_devices_manager_app/models/responses/filter_data.dart';
 import 'package:iot_devices_manager_app/models/responses/iot.dart';
 import 'package:iot_devices_manager_app/providers/iot.dart';
 import 'package:provider/provider.dart';
@@ -11,11 +11,9 @@ import '../../models/data_filtering.dart';
 class GraphWidget extends StatefulWidget {
   DateRange dateRange;
   int sensorId;
-  List<SensorData> sensorData;
 
   GraphWidget({
     required this.sensorId,
-    required this.sensorData,
     required this.dateRange,
     Key? key,
   }) : super(key: key);
@@ -29,7 +27,6 @@ class _GraphWidgetState extends State<GraphWidget> {
   bool _showAvgValue = true;
   bool _showMinValue = false;
   bool _showMaxValue = false;
-  bool _showTotalValue = false;
 
   Widget _buildCheckbox({
     required bool value,
@@ -58,12 +55,8 @@ class _GraphWidgetState extends State<GraphWidget> {
     return _sensor.isBoolSensor()
         ? [
             _buildCheckbox(
-              value: _showTotalValue,
-              onChanged: (newVal) {
-                setState(() {
-                  _showTotalValue = newVal ?? false;
-                });
-              },
+              value: true,
+              onChanged: null,
               label: 'Total Value',
               color: Theme.of(context).colorScheme.primary,
             ),
@@ -115,57 +108,68 @@ class _GraphWidgetState extends State<GraphWidget> {
             '${DateFormatter.date(widget.dateRange.dateFrom)} - ${DateFormatter.date(widget.dateRange.dateTo)}',
             style: Theme.of(context).textTheme.headline6,
           ),
-          SfCartesianChart(
-            enableAxisAnimation: false,
-            backgroundColor: Colors.white,
-            primaryXAxis: CategoryAxis(),
-            series: <LineSeries<SensorData, String>>[
-              if (_showMinValue == true)
-                LineSeries<SensorData, String>(
-                  color: Colors.blue,
-                  dataSource: dummyData,
-                  xValueMapper: (SensorData data, _) =>
-                      DateFormatter.graphDate(data.date),
-                  yValueMapper: (SensorData data, _) => data.minValue,
+          Consumer<FilterResponse>(
+            builder: (ctx, filterResponse, _) => Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: SfCartesianChart(
+                enableAxisAnimation: false,
+                backgroundColor: Colors.white,
+                primaryXAxis: CategoryAxis(),
+                series: _sensor.isBoolSensor() ?
+                <StepLineSeries<DataResponse, String>> [
+                  StepLineSeries<DataResponse, String>(
+                    color: Theme.of(context).colorScheme.primary,
+                    dataSource: filterResponse.filterJustSelected(),
+                    xValueMapper: (DataResponse data, _) =>
+                        DateFormatter.byFormat(
+                            data.date, filterResponse.dateFormat),
+                    yValueMapper: (DataResponse data, _) => data.totalValue,
+                  ),
+                ]
+                : <LineSeries<DataResponse, String>>[
+                  if (_showMinValue == true)
+                    LineSeries<DataResponse, String>(
+                      color: Colors.blue,
+                      dataSource: filterResponse.filterJustSelected(),
+                      xValueMapper: (DataResponse data, _) =>
+                          DateFormatter.byFormat(
+                              data.date, filterResponse.dateFormat),
+                      yValueMapper: (DataResponse data, _) => data.minValue,
+                    ),
+                  if (_showAvgValue == true)
+                    LineSeries<DataResponse, String>(
+                      color: Theme.of(context).colorScheme.primary,
+                      dataSource: filterResponse.filterJustSelected(),
+                      xValueMapper: (DataResponse data, _) =>
+                          DateFormatter.byFormat(
+                              data.date, filterResponse.dateFormat),
+                      yValueMapper: (DataResponse data, _) => data.avgValue,
+                    ),
+                  if (_showMaxValue == true)
+                    LineSeries<DataResponse, String>(
+                      color: Colors.red,
+                      dataSource: filterResponse.filterJustSelected(),
+                      xValueMapper: (DataResponse data, _) =>
+                          DateFormatter.byFormat(
+                              data.date, filterResponse.dateFormat),
+                      yValueMapper: (DataResponse data, _) => data.maxValue,
+                    )
+                ],
+                trackballBehavior: TrackballBehavior(
+                  enable: true,
+                  tooltipSettings: const InteractiveTooltip(
+                    enable: true,
+                    format: 'point.x: point.y',
+                  ),
+                  lineType: TrackballLineType.horizontal,
                 ),
-              if (_showAvgValue == true)
-                LineSeries<SensorData, String>(
-                  color: Theme.of(context).colorScheme.primary,
-                  dataSource: dummyData,
-                  xValueMapper: (SensorData data, _) =>
-                      DateFormatter.graphDate(data.date),
-                  yValueMapper: (SensorData data, _) => data.avgValue,
+                zoomPanBehavior: ZoomPanBehavior(
+                  enablePinching: true,
+                  enableDoubleTapZooming: true,
+                  // enableSelectionZooming: true,
+                  maximumZoomLevel: 0.5,
                 ),
-              if (_showMaxValue == true)
-                LineSeries<SensorData, String>(
-                  color: Colors.red,
-                  dataSource: dummyData,
-                  xValueMapper: (SensorData data, _) =>
-                      DateFormatter.graphDate(data.date),
-                  yValueMapper: (SensorData data, _) => data.maxValue,
-                ),
-              if (_showTotalValue == true)
-                LineSeries<SensorData, String>(
-                  color: Theme.of(context).colorScheme.primary,
-                  dataSource: dummyData,
-                  xValueMapper: (SensorData data, _) =>
-                      DateFormatter.graphDate(data.date),
-                  yValueMapper: (SensorData data, _) => data.totalValue,
-                ),
-            ],
-            trackballBehavior: TrackballBehavior(
-              enable: true,
-              tooltipSettings: const InteractiveTooltip(
-                enable: true,
-                format: 'point.x: point.y',
               ),
-              lineType: TrackballLineType.horizontal,
-            ),
-            zoomPanBehavior: ZoomPanBehavior(
-              enablePinching: true,
-              enableDoubleTapZooming: true,
-              // enableSelectionZooming: true,
-              maximumZoomLevel: 0.5,
             ),
           ),
         ],

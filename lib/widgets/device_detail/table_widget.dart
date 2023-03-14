@@ -1,21 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:iot_devices_manager_app/models/responses/data.dart';
+import 'package:iot_devices_manager_app/models/responses/filter_data.dart';
 import 'package:iot_devices_manager_app/models/responses/iot.dart';
 import 'package:iot_devices_manager_app/providers/iot.dart';
 import 'package:provider/provider.dart';
 
 import '../../common/date_format.dart';
-import '../../models/data_filtering.dart';
 
 class TableWidget extends StatefulWidget {
-  DateRange dateRange;
   int sensorId;
-  List<SensorData> sensorData;
 
   TableWidget({
     required this.sensorId,
-    required this.sensorData,
-    required this.dateRange,
     Key? key,
   }) : super(key: key);
 
@@ -30,13 +25,13 @@ class _TableWidgetState extends State<TableWidget> {
   var _sortAscending = true;
   var _sortColumnIndex = 0;
 
-  void _sortData(int columnIndex, bool ascending) {
+  void _sortData(List<DataResponse> data, int columnIndex, bool ascending) {
     setState(() {
       _sortColumnIndex = columnIndex;
       _sortAscending = ascending;
 
       // Sort the data list based on the selected column and sort order
-      widget.sensorData.sort((a, b) {
+      data.sort((a, b) {
         final aValue = a.date;
         final bValue = b.date;
         return ascending
@@ -46,32 +41,25 @@ class _TableWidgetState extends State<TableWidget> {
     });
   }
 
-  List<DataColumn> _getColumns() {
+  List<DataColumn> _getColumns(List<DataResponse> data) {
     return [
       DataColumn(
         label: CustomColumnText('Timestamp'),
         onSort: (columnIndex, ascending) {
-          _sortData(columnIndex, ascending);
+          _sortData(data, columnIndex, ascending);
         },
       ),
       DataColumn(
         label: CustomColumnText('Average (${_sensor.getUnit()})'),
-        onSort: (columnIndex, ascending) {
-          _sortData(columnIndex, ascending);
-        },
+        onSort: null,
       ),
       DataColumn(
         label: CustomColumnText('Minimum (${_sensor.getUnit()})'),
-        onSort: (columnIndex, ascending) {
-          _sortData(columnIndex, ascending);
-        },
+        onSort: null,
       ),
       DataColumn(
-
         label: CustomColumnText('Maximum (${_sensor.getUnit()})'),
-        onSort: (columnIndex, ascending) {
-          _sortData(columnIndex, ascending);
-        },
+        onSort: null,
       ),
     ];
   }
@@ -81,9 +69,10 @@ class _TableWidgetState extends State<TableWidget> {
     final devices = Provider.of<IoTDevices>(context, listen: false);
     _sensor = devices.getSensorById(widget.sensorId);
     return SingleChildScrollView(
-        child: PaginatedDataTable(
+      child: Consumer<FilterResponse>(builder: (ctx, filterResponse, _) {
+        return PaginatedDataTable(
           rowsPerPage: _rowPerPage,
-          availableRowsPerPage: const[5, 10, 20, 50],
+          availableRowsPerPage: [5, 10, 20, 50, filterResponse.data.length],
           onRowsPerPageChanged: (value) {
             if (value != null) {
               setState(() {
@@ -91,28 +80,29 @@ class _TableWidgetState extends State<TableWidget> {
               });
             }
           },
-          columns: _getColumns(),
-          source: _DeviceDataSource(widget.sensorData),
+          columns: _getColumns(filterResponse.data),
+          source: _DeviceDataSource(filterResponse, filterResponse.data.length),
           sortColumnIndex: _sortColumnIndex,
           sortAscending: _sortAscending,
-        ),
+        );
+      }),
     );
   }
 }
 
 class _DeviceDataSource extends DataTableSource {
   int _selectedCount = 0;
-  final List<SensorData> _sensorData;
+  final FilterResponse _filterResponse;
 
-  _DeviceDataSource(this._sensorData);
+  _DeviceDataSource(this._filterResponse, this._selectedCount);
 
   @override
   DataRow? getRow(int index) {
     assert(index >= 0);
-    if (index >= _sensorData.length) {
+    if (index >= _filterResponse.data.length) {
       return null;
     }
-    final SensorData data = _sensorData[index];
+    final DataResponse data = _filterResponse.data[index];
     return DataRow.byIndex(
       color: MaterialStateProperty.all<Color>(Colors.white),
       index: index,
@@ -124,8 +114,9 @@ class _DeviceDataSource extends DataTableSource {
         if (data.selected != value) {
           _selectedCount += value ? 1 : -1;
           assert(_selectedCount >= 0);
-          data.selected = value;
+          data.setSelected = value;
           notifyListeners();
+          _filterResponse.toggleRebuild();
         }
       },
       cells: [
@@ -141,7 +132,7 @@ class _DeviceDataSource extends DataTableSource {
   bool get isRowCountApproximate => false;
 
   @override
-  int get rowCount => _sensorData.length;
+  int get rowCount => _filterResponse.data.length;
 
   @override
   int get selectedRowCount => _selectedCount;
@@ -149,6 +140,7 @@ class _DeviceDataSource extends DataTableSource {
 
 class CustomColumnText extends StatelessWidget {
   String text;
+
   CustomColumnText(this.text, {Key? key}) : super(key: key);
 
   @override
@@ -167,6 +159,7 @@ class CustomColumnText extends StatelessWidget {
 
 class CustomCellText extends StatelessWidget {
   String text;
+
   CustomCellText(this.text, {Key? key}) : super(key: key);
 
   @override
@@ -179,4 +172,3 @@ class CustomCellText extends StatelessWidget {
     );
   }
 }
-

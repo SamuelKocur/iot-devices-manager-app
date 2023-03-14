@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:iot_devices_manager_app/models/responses/data.dart';
+import 'package:iot_devices_manager_app/models/requests/filter_data.dart';
+import 'package:iot_devices_manager_app/models/responses/filter_data.dart';
+import 'package:iot_devices_manager_app/providers/data_warehouse.dart';
 import 'package:iot_devices_manager_app/themes/light/drop_down_menu.dart';
 import 'package:iot_devices_manager_app/widgets/device_detail/graph_widget.dart';
 import 'package:iot_devices_manager_app/widgets/device_detail/table_widget.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/data_filtering.dart';
-import '../../providers/iot.dart';
 import '../../themes/light/text_theme.dart';
 import '../common/error_dialog.dart';
 
@@ -21,15 +22,18 @@ class FilterDataWidget extends StatefulWidget {
 
 class _FilterDataWidgetState extends State<FilterDataWidget> {
   String _dataRangeCurrentValue = DateRangeOptions.pastWeek.text;
-  DateRange _dateRange =
-      DateRangeOptions.getDateTime(DateRangeOptions.pastWeek.text);
-  List<SensorData> _sensorData = [];
+  DateRange _dateRange = DateRangeOptions.getDateTime(DateRangeOptions.pastWeek.text);
+
 
   Future<void> _getSensorData(BuildContext context) async {
     try {
-      await Provider.of<IoTDevices>(context, listen: false)
-          .fetchAndSetFavoriteIoTDevices();
-      _sensorData = dummyData;
+      FilterDataRequest request = FilterDataRequest(
+        dateFrom: _dateRange.dateFrom,
+        dateTo: _dateRange.dateTo,
+        sensorId: widget.sensorId,
+      );
+      FilterResponse filterProvider = Provider.of<FilterResponse>(context, listen: false);
+      await Provider.of<DataWarehouse>(context, listen: false).filterData(request, filterProvider);
     } catch (error) {
       DialogUtils.showErrorDialog(
           context, 'Something went wrong. Please try again later.');
@@ -98,7 +102,11 @@ class _FilterDataWidgetState extends State<FilterDataWidget> {
         fromRange = value;
         setState(() {
           _dataRangeCurrentValue = newDateRangeOption;
-          _dateRange = DateRange(fromRange.start, fromRange.end);
+          _dateRange = DateRange(
+              fromRange.start,
+              fromRange.end
+                  .add(const Duration(days: 1))
+                  .subtract(const Duration(milliseconds: 1)));
         });
       }
     });
@@ -143,41 +151,19 @@ class _FilterDataWidgetState extends State<FilterDataWidget> {
           builder: (ctx, snapshot) =>
               snapshot.connectionState == ConnectionState.waiting
                   ? Column(
-                    children: [
-                      Center(
+                      children: [
+                        Center(
                           child: Stack(
                             alignment: Alignment.center,
                             children: [
                               GraphWidget(
                                 sensorId: widget.sensorId,
-                                sensorData: const [],
+                                // filterResponse: FilterResponse(dateFormat: DateFormatter.dateGraphFormat, data: []),
                                 dateRange: _dateRange,
                               ),
                               const CircularProgressIndicator()
                             ],
                           ),
-                        ),
-                      Text(
-                        'Data:',
-                        style: Theme.of(context).textTheme.headline5,
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      TableWidget(
-                        sensorId: widget.sensorId,
-                        sensorData: const [],
-                        dateRange: _dateRange,
-                      )
-                    ],
-                  )
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        GraphWidget(
-                          sensorId: widget.sensorId,
-                          sensorData: _sensorData,
-                          dateRange: _dateRange,
                         ),
                         Text(
                           'Data:',
@@ -188,8 +174,34 @@ class _FilterDataWidgetState extends State<FilterDataWidget> {
                         ),
                         TableWidget(
                           sensorId: widget.sensorId,
-                          sensorData: _sensorData,
+                          // filterResponse: FilterResponse(dateFormat: DateFormatter.dateGraphFormat, data: []),
+                          // dateRange: _dateRange,
+                        )
+                      ],
+                    )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        GraphWidget(
+                          sensorId: widget.sensorId,
+                          // filterResponse: _filterResponse,
                           dateRange: _dateRange,
+                        ),
+                        Text(
+                          'Data:',
+                          style: Theme.of(context).textTheme.headline5,
+                        ),
+                        Text(
+                          'Selected data will be display in the graph',
+                          style: Theme.of(context).textTheme.bodyText1,
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        TableWidget(
+                          sensorId: widget.sensorId,
+                          // filterResponse: _filterResponse,
+                          // dateRange: _dateRange,
                         )
                       ],
                     ),

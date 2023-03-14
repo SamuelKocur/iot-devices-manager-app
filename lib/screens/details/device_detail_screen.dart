@@ -33,6 +33,50 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
     }
   }
 
+  List<Widget> _getLatestValueWidget(Sensor sensor, BuildContext context) {
+    if (sensor.isBoolSensor()) {
+      return [
+        const SizedBox(
+          height: 10,
+        ),
+        const Text(
+          'Last activity:',
+          textAlign: TextAlign.left,
+          style: TextInDetailsScreen.data,
+        ),
+        const SizedBox(
+          height: 5,
+        ),
+        Text(
+          sensor.getFormattedDate(),
+          style: const TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.w700,
+          ),
+          softWrap: false,
+          maxLines: 1,
+          overflow: TextOverflow.fade,
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+      ];
+    }
+    return [
+      Text(
+        _sensor!.getFormattedDate(),
+        style: TextInDetailsScreen.data,
+      ),
+      Text(
+        _sensor!.getFormattedLatestValue(),
+        style: const TextStyle(
+          fontSize: 50,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final sensorId = ModalRoute.of(context)!.settings.arguments as int;
@@ -73,17 +117,17 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: FutureBuilder(
-            future: _getDeviceDetail(context, sensorId),
-            builder: (ctx, snapshot) => snapshot.connectionState ==
-                    ConnectionState.waiting
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : RefreshIndicator(
+      body: FutureBuilder(
+        future: _getDeviceDetail(context, sensorId),
+        builder: (ctx, snapshot) => snapshot.connectionState ==
+                ConnectionState.waiting
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: RefreshIndicator(
                     onRefresh: () => _getDeviceDetail(context, sensorId),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,7 +138,8 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                             Icon(
                               DeviceTypes.values
                                   .firstWhere(
-                                      (element) => element.text == _sensor!.type,
+                                      (element) =>
+                                          element.text == _sensor!.type,
                                       orElse: () => DeviceTypes.others)
                                   .icon,
                               color: Theme.of(context).colorScheme.primary,
@@ -102,19 +147,9 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                             ),
                             Column(
                               mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  _sensor!.getFormattedDate(),
-                                  style: TextInDetailsScreen.data,
-                                ),
-                                Text(
-                                  _sensor!.getFormattedLatestValue(),
-                                  style: const TextStyle(
-                                    fontSize: 50,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ],
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children:
+                                  _getLatestValueWidget(_sensor!, context),
                             )
                           ],
                         ),
@@ -145,8 +180,8 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                       ],
                     ),
                   ),
-          ),
-        ),
+                ),
+              ),
       ),
     );
   }

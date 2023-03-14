@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:iot_devices_manager_app/models/responses/filter_data.dart';
 import 'package:iot_devices_manager_app/providers/auth.dart';
+import 'package:iot_devices_manager_app/providers/data_warehouse.dart';
 import 'package:iot_devices_manager_app/providers/iot.dart';
 import 'package:iot_devices_manager_app/providers/location.dart';
 import 'package:iot_devices_manager_app/screens/auth/forgot_password_screen.dart';
@@ -31,6 +33,12 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<Auth>(
           create: (_) => Auth(),
         ),
+        ChangeNotifierProvider<FilterResponse>(
+          create: (_) => FilterResponse(
+            dateFormat: 'd MMM y H:mm',
+            data: [],
+          ),
+        ),
         ChangeNotifierProxyProvider<Auth, IoTDevices>(
             create: (ctx) => IoTDevices({}),
             update: (ctx, auth, previousDevices) => previousDevices ?? IoTDevices(
@@ -40,7 +48,12 @@ class MyApp extends StatelessWidget {
             create: (ctx) => Locations({}, Provider.of<IoTDevices>(ctx, listen: false)),
             update: (ctx, auth, previousLocations) => previousLocations ?? Locations(
                 {}, Provider.of<IoTDevices>(ctx, listen: false))..update(auth.requestHeader, )
-        )
+        ),
+        ChangeNotifierProxyProvider<Auth, DataWarehouse>(
+            create: (ctx) => DataWarehouse({}),
+            update: (ctx, auth, _) => _ ?? DataWarehouse(
+                {})..update(auth.requestHeader)
+        ),
       ],
       child: Consumer<Auth>(
         builder: (ctx, auth, child) => MaterialApp(

@@ -8,7 +8,7 @@ import '../models/responses/iot.dart';
 import 'auth.dart';
 
 class Locations with ChangeNotifier {
-  static const locationsUrl = '$baseUrl/locations';
+  static const locationsUrl = '$baseApiUrl/locations';
   final IoTDevices ioTDevicesProvider;
 
   Map<String, String> requestHeaders;

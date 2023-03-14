@@ -9,14 +9,15 @@ import '../models/requests/auth.dart';
 import '../models/responses/auth.dart';
 import '../storage/storage_helper.dart';
 
-const baseUrl = 'http://192.168.15.30:8000/api';
-// const baseUrl = 'http://192.168.68.114:8000/api';
-const imageUrl = 'http://192.168.15.30:8000';
-// const baseUrl = 'http://10.0.2.2:8000/api';
-// const imageUrl = 'http://10.0.2.2:8000';
+
+// needed for communication with backend server API
+const baseApiUrl = 'http://130.162.218.188/api';
+const imageUrl = 'http://130.162.218.188';
+// const baseApiUrl = 'http://192.168.15.30:8000/api';
+// const imageUrl = 'http://192.168.15.30:8000';
 
 class Auth with ChangeNotifier {
-  static const authUrl = '$baseUrl/auth';
+  static const authUrl = '$baseApiUrl/auth';
   String? _token;
   DateTime? _expiryDate;
   int? _userId;
@@ -81,8 +82,8 @@ class Auth with ChangeNotifier {
     try {
       final response = await http.post(
         url,
-        body: json.encode(jsonRequest),
         headers: {'Content-Type': 'application/json'},
+        body: json.encode(jsonRequest),
       );
       final responseData = json.decode(response.body) as Map<String, dynamic>;
       if (response.statusCode >= 400) {
