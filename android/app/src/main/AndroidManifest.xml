@@ -1,7 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.iot_devices_manager_app">
-   <application
-        android:label="iot_devices_manager_app"
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <application
+        android:label="Smart-IoT"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
