@@ -24,8 +24,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   var _showPassword = false;
   var _showConfirmPassword = false;
   var _isLoading = false;
-  final _passwordRegExp =
-      RegExp(r'^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!@#$&*~]).{8,}$');
+  final _passwordRegExp = RegExp(r'^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!@#$&*~]).{8,}$');
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) {

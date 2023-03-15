@@ -7,18 +7,18 @@ class DateFormatter {
  static const dateGraphFormat = 'd MMM y H:mm';
 
  static String dateTime(DateTime date) {
-  return DateFormat(dateTimeFormat).format(date);
+  return DateFormat(dateTimeFormat).format(date.toLocal());
  }
 
  static String date(DateTime date) {
-  return DateFormat(dateFormat).format(date);
+  return DateFormat(dateFormat).format(date.toLocal());
  }
 
  static String graphDate(DateTime date) {
-  return DateFormat(dateGraphFormat).format(date);
+  return DateFormat(dateGraphFormat).format(date.toLocal());
  }
 
  static String byFormat(DateTime date, String format) {
-  return DateFormat(format).format(date);
+  return DateFormat(format).format(date.toLocal());
  }
 }

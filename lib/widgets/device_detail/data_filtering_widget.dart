@@ -158,7 +158,6 @@ class _FilterDataWidgetState extends State<FilterDataWidget> {
                             children: [
                               GraphWidget(
                                 sensorId: widget.sensorId,
-                                // filterResponse: FilterResponse(dateFormat: DateFormatter.dateGraphFormat, data: []),
                                 dateRange: _dateRange,
                               ),
                               const CircularProgressIndicator()
@@ -174,8 +173,6 @@ class _FilterDataWidgetState extends State<FilterDataWidget> {
                         ),
                         TableWidget(
                           sensorId: widget.sensorId,
-                          // filterResponse: FilterResponse(dateFormat: DateFormatter.dateGraphFormat, data: []),
-                          // dateRange: _dateRange,
                         )
                       ],
                     )
@@ -184,7 +181,6 @@ class _FilterDataWidgetState extends State<FilterDataWidget> {
                       children: [
                         GraphWidget(
                           sensorId: widget.sensorId,
-                          // filterResponse: _filterResponse,
                           dateRange: _dateRange,
                         ),
                         Text(
@@ -200,8 +196,6 @@ class _FilterDataWidgetState extends State<FilterDataWidget> {
                         ),
                         TableWidget(
                           sensorId: widget.sensorId,
-                          // filterResponse: _filterResponse,
-                          // dateRange: _dateRange,
                         )
                       ],
                     ),

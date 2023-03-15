@@ -30,25 +30,30 @@ class AuthDataResponse {
 class UserInfo {
   final int id;
   final String email;
-  final String fullName;
+  String firstName;
+  String lastName;
+
 
   UserInfo({
     required this.id,
     required this.email,
-    required this.fullName,
+    required this.firstName,
+    required this.lastName,
   });
 
   factory UserInfo.fromJson(Map<String, dynamic> json) => UserInfo(
         id: json['id'],
         email: json['email'],
-        fullName: json['full_name'],
+        firstName: json['first_name'],
+        lastName: json['last_name'],
       );
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['email'] = email;
-    data['full_name'] = fullName;
+    data['first_name'] = firstName;
+    data['last_name'] = lastName;
     return data;
   }
 }

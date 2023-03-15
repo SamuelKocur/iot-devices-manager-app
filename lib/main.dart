@@ -4,14 +4,18 @@ import 'package:iot_devices_manager_app/providers/auth.dart';
 import 'package:iot_devices_manager_app/providers/data_warehouse.dart';
 import 'package:iot_devices_manager_app/providers/iot.dart';
 import 'package:iot_devices_manager_app/providers/location.dart';
+import 'package:iot_devices_manager_app/screens/about_screen.dart';
+import 'package:iot_devices_manager_app/screens/account_details/account_details_screen.dart';
+import 'package:iot_devices_manager_app/screens/account_details/personal_information_screen.dart';
 import 'package:iot_devices_manager_app/screens/auth/forgot_password_screen.dart';
 import 'package:iot_devices_manager_app/screens/auth/login_screen.dart';
 import 'package:iot_devices_manager_app/screens/auth/register_screen.dart';
-import 'package:iot_devices_manager_app/screens/change_password_screen.dart';
+import 'package:iot_devices_manager_app/screens/account_details/change_password_screen.dart';
 import 'package:iot_devices_manager_app/screens/details/device_detail_screen.dart';
-import 'package:iot_devices_manager_app/screens/home_screen.dart';
+import 'package:iot_devices_manager_app/screens/iot/home_screen.dart';
 import 'package:iot_devices_manager_app/screens/details/locations_detail_screen.dart';
-import 'package:iot_devices_manager_app/screens/splash_screen.dart';
+import 'package:iot_devices_manager_app/screens/settings_screen.dart';
+import 'package:iot_devices_manager_app/screens/common/splash_screen.dart';
 import 'package:iot_devices_manager_app/themes/light/bar_theme.dart';
 import 'package:iot_devices_manager_app/themes/light/card_theme.dart';
 import 'package:iot_devices_manager_app/themes/light/check_box.dart';
@@ -103,7 +107,11 @@ class MyApp extends StatelessWidget {
             LoginScreen.routeName: (ctx) => const LoginScreen(),
             RegisterScreen.routeName: (ctx) => const RegisterScreen(),
             ForgotPasswordScreen.routeName: (ctx) => const ForgotPasswordScreen(),
+            AboutScreen.routeName: (ctx) => const AboutScreen(),
+            SettingScreen.routeName: (ctx) => const SettingScreen(),
+            AccountDetailsScreen.routeName: (ctx) => const AccountDetailsScreen(),
             ChangePasswordScreen.routeName: (ctx) => const ChangePasswordScreen(),
+            PersonalInformationScreen.routeName: (ctx) => const PersonalInformationScreen(),
             HomeScreen.routeName: (ctx) => const HomeScreen(),
             DeviceDetailScreen.routeName: (ctx) => const DeviceDetailScreen(),
             LocationDetailScreen.routeName: (ctx) => const LocationDetailScreen(),

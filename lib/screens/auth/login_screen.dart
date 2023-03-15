@@ -97,14 +97,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(
                   height: 3,
                 ),
-                // Padding(
-                //   padding: const EdgeInsets.only(left: 20),
-                //   child: Text(
-                //     'Control all your smart devices, from anywhere and anytime.',
-                //     style: Theme.of(context).textTheme.bodyText1,
-                //     textAlign: TextAlign.center,
-                //   ),
-                // ),
                 const SizedBox(
                   height: 40,
                 ),

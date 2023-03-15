@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:iot_devices_manager_app/widgets/common/no_iot_devices.dart';
 import 'package:provider/provider.dart';
 
-import '../models/device_types.dart';
-import '../providers/iot.dart';
-import '../themes/light/elevated_button_theme.dart';
-import '../widgets/common/error_dialog.dart';
-import '../widgets/device_card.dart';
+import '../../models/device_types.dart';
+import '../../providers/iot.dart';
+import '../../themes/light/elevated_button_theme.dart';
+import '../../widgets/common/error_dialog.dart';
+import '../../widgets/device_card.dart';
 
 class DevicesScreen extends StatefulWidget {
   static const routeName = '/devices';
@@ -78,36 +79,40 @@ class _DevicesScreenState extends State<DevicesScreen> {
         Expanded(
           child: FutureBuilder(
             future: _refreshDevices(context),
-            builder: (ctx, snapshot) =>
-                snapshot.connectionState == ConnectionState.waiting
-                    ? const Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : RefreshIndicator(
-                        onRefresh: () => _refreshDevices(context),
-                        child: Consumer<IoTDevices>(
-                          builder: (ctx, devicesData, _) => ListView.builder(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 15,
-                              vertical: 5,
-                            ),
-                            itemBuilder: (ctx, index) => ChangeNotifierProvider.value(
-                              value: _selectedTag == 'all'
-                                  ? devicesData.sensors[index]
-                                  : devicesData.filteredSensors[index],
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  bottom: 10,
+            builder: (ctx, snapshot) => snapshot.connectionState ==
+                    ConnectionState.waiting
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : RefreshIndicator(
+                    onRefresh: () => _refreshDevices(context),
+                    child: Consumer<IoTDevices>(
+                      builder: (ctx, devicesData, _) =>
+                          devicesData.sensors.isEmpty
+                              ? const NoAvailableIoTDevicesWidget()
+                              : ListView.builder(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 15,
+                                    vertical: 5,
+                                  ),
+                                  itemBuilder: (ctx, index) =>
+                                      ChangeNotifierProvider.value(
+                                    value: _selectedTag == 'all'
+                                        ? devicesData.sensors[index]
+                                        : devicesData.filteredSensors[index],
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        bottom: 10,
+                                      ),
+                                      child: DeviceCard(),
+                                    ),
+                                  ),
+                                  itemCount: _selectedTag == 'all'
+                                      ? devicesData.sensors.length
+                                      : devicesData.filteredSensors.length,
                                 ),
-                                child: DeviceCard(),
-                              ),
-                            ),
-                            itemCount: _selectedTag == 'all'
-                                ? devicesData.sensors.length
-                                : devicesData.filteredSensors.length,
-                          ),
-                        ),
-                      ),
+                    ),
+                  ),
           ),
         ),
       ],

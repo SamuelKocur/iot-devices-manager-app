@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:iot_devices_manager_app/screens/devices_screen.dart';
-import 'package:iot_devices_manager_app/screens/favorites_screen.dart';
-import 'package:iot_devices_manager_app/screens/locations_screen.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
+
+import 'package:iot_devices_manager_app/screens/iot/devices_screen.dart';
+import 'package:iot_devices_manager_app/screens/iot/favorites_screen.dart';
+import 'package:iot_devices_manager_app/screens/iot/locations_screen.dart';
 
 
-import '../widgets/app_drawer.dart';
+import '../../widgets/app_drawer.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = '/home';
@@ -27,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   @override
   void initState() {
     super.initState();
+    initializeDateFormatting();
     _tabController = TabController(initialIndex: 0, length: 3, vsync: this);
   }
 

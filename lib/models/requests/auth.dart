@@ -63,6 +63,25 @@ class ChangePasswordRequest {
   }
 }
 
+
+class UpdateProfileRequest {
+  String? firstName;
+  String? lastName;
+
+  UpdateProfileRequest({this.firstName, this.lastName});
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (firstName != null) {
+      data['first_name'] = firstName;
+    }
+    if (lastName != null) {
+      data['last_name'] = lastName;
+    }
+    return data;
+  }
+}
+
 class ForgotPasswordRequest {
   String? email;
 

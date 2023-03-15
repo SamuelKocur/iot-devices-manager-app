@@ -22,7 +22,8 @@ class Auth with ChangeNotifier {
   DateTime? _expiryDate;
   int? _userId;
   String? _email;
-  String? _fullName;
+  String? _firstName;
+  String? _lastName;
   Timer? _authTimer;
   bool _isLoggedIn = false;
 
@@ -45,8 +46,12 @@ class Auth with ChangeNotifier {
     return _email;
   }
 
-  String? get fullName {
-    return _fullName;
+  String? get firstName {
+    return _firstName;
+  }
+
+  String? get lastName {
+    return _lastName;
   }
 
   Map<String, String> get requestHeader => {
@@ -96,11 +101,12 @@ class Auth with ChangeNotifier {
       _expiryDate = authResponse.expiryDate;
       _userId = authResponse.userInfo.id;
       _email = authResponse.userInfo.email;
-      _fullName = authResponse.userInfo.fullName;
+      _firstName = authResponse.userInfo.firstName;
+      _lastName = authResponse.userInfo.lastName;
       _isLoggedIn = true;
 
-      _autoLogout();
       notifyListeners();
+      _autoLogout();
 
       final storageHelper = await _getStorageHelper();
       storageHelper.setValue('userData', json.encode(authResponse.toJson()));
@@ -133,7 +139,8 @@ class Auth with ChangeNotifier {
     _token = extractedUserData.token;
     _userId = extractedUserData.userInfo.id;
     _email = extractedUserData.userInfo.email;
-    _fullName = extractedUserData.userInfo.fullName;
+    _firstName = extractedUserData.userInfo.firstName;
+    _lastName = extractedUserData.userInfo.lastName;
     _expiryDate = extractedUserData.expiryDate;
 
     if (await token == null) {
@@ -148,12 +155,17 @@ class Auth with ChangeNotifier {
     return true;
   }
 
-  Future<void> logout() async {
-    final url = Uri.parse('$authUrl/logout/');
+  Future<bool> logoutLogic(String urlSegment) async {
+    final url = Uri.parse('$authUrl/$urlSegment/');
     final response = await http.post(
       url,
       headers: requestHeader,
     );
+
+    if (response.statusCode != 204) {
+      return false;
+    }
+
     _token = null;
     _userId = null;
     _email = null;
@@ -168,6 +180,15 @@ class Auth with ChangeNotifier {
 
     final storageHelper = await _getStorageHelper();
     storageHelper.clear();
+    return true;
+  }
+
+  Future<void> logout() async {
+    logoutLogic('logout');
+  }
+
+  Future<bool> logoutAll() async {
+    return logoutLogic('logout-all');
   }
 
   void _autoLogout() {
@@ -176,6 +197,79 @@ class Auth with ChangeNotifier {
     }
     final timeToExpiry = _expiryDate!.difference(DateTime.now()).inSeconds;
     _authTimer = Timer(Duration(seconds: timeToExpiry), logout);
+  }
+
+  Future<bool> deleteAccount() async {
+    final url = Uri.parse('$authUrl/delete-account/');
+    try {
+      final response = await http.delete(
+        url,
+        headers: requestHeader,
+      );
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
+      if (response.statusCode >= 400) {
+        throw HttpException(
+            responseData.values.join().replaceAll('[', '').replaceAll(']', '')
+        );
+      }
+      logoutAll();
+    } catch (error) {
+      rethrow;
+    }
+    return true;
+  }
+
+  Future<bool> changePassword(ChangePasswordRequest request) async {
+    final url = Uri.parse('$authUrl/change-password/');
+    try {
+      final response = await http.post(
+        url,
+        headers: requestHeader,
+        body: json.encode(request.toJson()),
+      );
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
+      if (response.statusCode >= 400) {
+        throw HttpException(
+            responseData.values.join().replaceAll('[', '').replaceAll(']', '')
+        );
+      }
+    } catch (error) {
+      rethrow;
+    }
+    return true;
+  }
+
+  Future<bool> updateProfile(UpdateProfileRequest request) async {
+    final url = Uri.parse('$authUrl/update-profile/');
+    try {
+      final response = await http.put(
+        url,
+        headers: requestHeader,
+        body: json.encode(request.toJson()),
+      );
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
+      if (response.statusCode >= 400) {
+        throw HttpException(
+            responseData.values.join().replaceAll('[', '').replaceAll(']', '')
+        );
+      }
+      final storageHelper = await _getStorageHelper();
+
+      if (!storageHelper.containsKey('userData')) {
+        return false;
+      }
+
+      _firstName = request.firstName ?? _firstName;
+      _lastName = request.lastName ?? _lastName;
+
+      final extractedUserData = AuthDataResponse.fromJson(json.decode(storageHelper.getValue('userData')!));
+      extractedUserData.userInfo.firstName = _firstName ?? extractedUserData.userInfo.firstName;
+      extractedUserData.userInfo.lastName = _lastName ?? extractedUserData.userInfo.lastName;
+      storageHelper.setValue('userData', json.encode(extractedUserData.toJson()));
+    } catch (error) {
+      rethrow;
+    }
+    return true;
   }
 
   Future<StorageHelper> _getStorageHelper() async {

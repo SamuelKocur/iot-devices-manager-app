@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:iot_devices_manager_app/screens/home_screen.dart';
+import 'package:iot_devices_manager_app/screens/about_screen.dart';
+import 'package:iot_devices_manager_app/screens/account_details/account_details_screen.dart';
+import 'package:iot_devices_manager_app/screens/iot/home_screen.dart';
+import 'package:iot_devices_manager_app/screens/settings_screen.dart';
 import 'package:provider/provider.dart';
 
 import './common/error_dialog.dart';
@@ -76,7 +79,7 @@ class _AppDrawerState extends State<AppDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    final username = Provider.of<Auth>(context).fullName;
+    final firstName = Provider.of<Auth>(context).firstName;
     return Drawer(
       backgroundColor: Colors.white,
       child: SingleChildScrollView(
@@ -85,7 +88,7 @@ class _AppDrawerState extends State<AppDrawer> {
           children: [
             AppBar(
               title: Text(
-                'Hey, $username!',
+                'Hey, $firstName!',
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -103,23 +106,23 @@ class _AppDrawerState extends State<AppDrawer> {
             ),
             _getListTile(
               iconData: Icons.account_circle_outlined,
-              title: 'Profile details',
+              title: 'Account',
               onTap: () {
-                // Navigator.of(context).pushNamed(HomeScreen.routeName);
+                Navigator.of(context).pushNamed(AccountDetailsScreen.routeName);
               },
             ),
             _getListTile(
               iconData: Icons.settings_outlined,
               title: 'Settings',
               onTap: () {
-                // Navigator.of(context).pushNamed(HomeScreen.routeName);
+                Navigator.of(context).pushNamed(SettingScreen.routeName);
               },
             ),
             _getListTile(
               iconData: Icons.info_outline,
               title: 'About',
               onTap: () {
-                // Navigator.of(context).pushNamed(HomeScreen.routeName);
+                Navigator.of(context).pushNamed(AboutScreen.routeName);
               },
             ),
             _getListTile(
