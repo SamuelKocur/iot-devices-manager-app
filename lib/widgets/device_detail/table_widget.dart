@@ -71,7 +71,7 @@ class _TableWidgetState extends State<TableWidget> {
     return SingleChildScrollView(
       child: Consumer<FilterResponse>(builder: (ctx, filterResponse, _) {
         return PaginatedDataTable(
-          rowsPerPage: _rowPerPage,
+          rowsPerPage: filterResponse.data.length != _rowPerPage ? 10 : _rowPerPage,
           availableRowsPerPage: [5, 10, 20, 50, filterResponse.data.length],
           onRowsPerPageChanged: (value) {
             if (value != null) {
