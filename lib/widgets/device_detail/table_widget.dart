@@ -24,6 +24,7 @@ class _TableWidgetState extends State<TableWidget> {
 
   var _sortAscending = true;
   var _sortColumnIndex = 0;
+  List<int> _availableRowsPerPage = [5, 10, 20, 50, 100];
 
   void _sortData(List<DataResponse> data, int columnIndex, bool ascending) {
     setState(() {
@@ -64,6 +65,13 @@ class _TableWidgetState extends State<TableWidget> {
     ];
   }
 
+  int _getRowPerPage(int currentListLength) {
+    if (!_availableRowsPerPage.contains(_rowPerPage) && _rowPerPage != currentListLength) {
+      return 10;
+    }
+    return _rowPerPage;
+  }
+
   @override
   Widget build(BuildContext context) {
     final devices = Provider.of<IoTDevices>(context, listen: false);
@@ -71,8 +79,8 @@ class _TableWidgetState extends State<TableWidget> {
     return SingleChildScrollView(
       child: Consumer<FilterResponse>(builder: (ctx, filterResponse, _) {
         return PaginatedDataTable(
-          rowsPerPage: filterResponse.data.length != _rowPerPage ? 10 : _rowPerPage,
-          availableRowsPerPage: [5, 10, 20, 50, filterResponse.data.length],
+          rowsPerPage: _getRowPerPage(filterResponse.data.length),
+          availableRowsPerPage: [..._availableRowsPerPage, filterResponse.data.length],
           onRowsPerPageChanged: (value) {
             if (value != null) {
               setState(() {
