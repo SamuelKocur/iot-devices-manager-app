@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:iot_devices_manager_app/models/responses/filter_data.dart';
-import 'package:iot_devices_manager_app/models/responses/iot.dart';
 import 'package:iot_devices_manager_app/providers/iot.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../../common/date_format.dart';
 import '../../models/data_filtering.dart';
+import '../../models/responses/iot/sensor.dart';
 
 class GraphWidget extends StatefulWidget {
   DateRange dateRange;

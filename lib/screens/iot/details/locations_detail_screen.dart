@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:iot_devices_manager_app/models/responses/iot.dart';
 import 'package:iot_devices_manager_app/widgets/common/custom_input_field.dart';
 import 'package:iot_devices_manager_app/widgets/location_card.dart';
 import 'package:provider/provider.dart';
 
+import '../../../models/responses/iot/location.dart';
 import '../../../providers/location.dart';
 import '../../../widgets/common/error_dialog.dart';
 import '../../../widgets/device_card.dart';

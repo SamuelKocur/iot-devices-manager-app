@@ -4,7 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import '../models/responses/iot.dart';
+import '../models/responses/iot/sensor.dart';
 import 'auth.dart';
 
 class IoTDevices with ChangeNotifier {

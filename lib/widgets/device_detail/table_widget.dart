@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:iot_devices_manager_app/models/responses/filter_data.dart';
-import 'package:iot_devices_manager_app/models/responses/iot.dart';
 import 'package:iot_devices_manager_app/providers/iot.dart';
 import 'package:provider/provider.dart';
 
 import '../../common/date_format.dart';
+import '../../models/responses/iot/sensor.dart';
 
 class TableWidget extends StatefulWidget {
   int sensorId;

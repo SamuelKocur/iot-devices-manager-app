@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:iot_devices_manager_app/models/responses/iot.dart';
 import 'package:iot_devices_manager_app/screens/iot/details/locations_detail_screen.dart';
 import 'package:iot_devices_manager_app/widgets/common/stroke_text.dart';
 import 'package:provider/provider.dart';
+
+import '../models/responses/iot/location.dart';
 
 class LocationCard extends StatelessWidget {
   var isLocationsScreen = false;

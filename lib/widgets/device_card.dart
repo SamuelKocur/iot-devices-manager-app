@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:iot_devices_manager_app/models/device_types.dart';
-import 'package:iot_devices_manager_app/models/responses/iot.dart';
 import 'package:iot_devices_manager_app/screens/iot/details/device_detail_screen.dart';
 import 'package:iot_devices_manager_app/screens/iot/details/locations_detail_screen.dart';
 import 'package:iot_devices_manager_app/themes/light/text_theme.dart';
 import 'package:provider/provider.dart';
 
+import '../models/responses/iot/sensor.dart';
 import '../providers/iot.dart';
 import '../providers/location.dart';
 import '../themes/light/elevated_button_theme.dart';

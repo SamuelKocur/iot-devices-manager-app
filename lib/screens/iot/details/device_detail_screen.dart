@@ -5,7 +5,7 @@ import 'package:iot_devices_manager_app/widgets/device_detail/data_filtering_wid
 import 'package:provider/provider.dart';
 
 import '../../../models/device_types.dart';
-import '../../../models/responses/iot.dart';
+import '../../../models/responses/iot/sensor.dart';
 import '../../../providers/iot.dart';
 import '../../../widgets/common/custom_input_field.dart';
 import '../../../widgets/common/error_dialog.dart';
@@ -176,7 +176,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                   Consumer<IoTDevices>(
                     builder: (ctx, devicesData, _) => IconButton(
                       enableFeedback: false,
-                      onPressed: () => Provider.of<IoTDevices>(context, listen: false).toggleFavoriteSensors(_sensor.id ?? 0),
+                      onPressed: () => Provider.of<IoTDevices>(context, listen: false).toggleFavoriteSensors(_sensor.id),
                       icon: Icon(
                         _sensor.isFavorite
                             ? Icons.favorite

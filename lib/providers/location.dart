@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:iot_devices_manager_app/providers/iot.dart';
 
-import '../models/responses/iot.dart';
+import '../models/responses/iot/location.dart';
 import 'auth.dart';
 
 class Locations with ChangeNotifier {
