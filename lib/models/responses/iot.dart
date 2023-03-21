@@ -7,7 +7,8 @@ import 'package:iot_devices_manager_app/providers/auth.dart';
 class Sensor with ChangeNotifier {
   final int id;
   final String order;
-  String? name;
+  String name;
+  String? customName;
   final String type;
   String? unit;
   DateTime? dateCreated;
@@ -19,7 +20,8 @@ class Sensor with ChangeNotifier {
   Sensor({
     required this.id,
     required this.order,
-    this.name,
+    required this.name,
+    this.customName,
     required this.type,
     this.unit,
     this.dateCreated,
@@ -33,6 +35,7 @@ class Sensor with ChangeNotifier {
     id: json['id'],
     order: json['order'],
     name: json['name'],
+    customName: json['custom_name'],
     type: json['type'],
     unit: json['unit'],
     dateCreated: DateTime.parse(json['date_created']),
@@ -43,6 +46,35 @@ class Sensor with ChangeNotifier {
         : LatestValue(value: 0, timestamp: DateTime.now()),
     device: Device.fromJson(json['device']),
   );
+
+  bool update(Sensor loadedSensor) {
+    bool hasChanged = false;
+    if (latestValue.value != loadedSensor.latestValue.value) {
+      latestValue.value = loadedSensor.latestValue.value;
+      hasChanged = true;
+    }
+    if (latestValue.timestamp != loadedSensor.latestValue.timestamp) {
+      latestValue.timestamp = loadedSensor.latestValue.timestamp;
+      hasChanged = true;
+    }
+    if (isFavorite != loadedSensor.isFavorite) {
+      isFavorite = loadedSensor.isFavorite;
+      hasChanged = true;
+    }
+    if (name != loadedSensor.name) {
+      name = loadedSensor.name;
+      hasChanged = true;
+    }
+    if (customName != loadedSensor.customName) {
+      customName = loadedSensor.customName;
+      hasChanged = true;
+    }
+    if (dateUpdated != loadedSensor.dateUpdated) {
+      dateUpdated = loadedSensor.dateUpdated;
+      hasChanged = true;
+    }
+    return hasChanged;
+  }
 
   void toggleFavorite() {
     isFavorite = !isFavorite;
@@ -61,36 +93,29 @@ class Sensor with ChangeNotifier {
     return "${latestValue.value} ${unit?.replaceAll('Â', '') ?? ""}";
   }
 
+  void setCustomName(String newCustomName) {
+    if (newCustomName.isEmpty) {
+      customName = newCustomName;
+    } else {
+      customName = newCustomName;
+    }
+    notifyListeners();
+  }
+  
+  void setLocation(Location newLocation) {
+    device.location = newLocation;
+    notifyListeners();
+  }
+
+  String getCustomNameOrName() {
+    return customName ?? name;
+  }
+
   String getUnit() {
     if (isBoolSensor()) {
       return "";
     }
     return unit?.replaceAll('Â', '') ?? "";
-  }
-
-  bool hasChanged(Sensor loadedSensor) {
-    bool hasChanged = false;
-    if (latestValue.value != loadedSensor.latestValue.value) {
-      latestValue.value = loadedSensor.latestValue.value;
-      hasChanged = true;
-    }
-    if (latestValue.timestamp != loadedSensor.latestValue.timestamp) {
-      latestValue.timestamp = loadedSensor.latestValue.timestamp;
-      hasChanged = true;
-    }
-    if (isFavorite != loadedSensor.isFavorite) {
-      isFavorite = loadedSensor.isFavorite;
-      hasChanged = true;
-    }
-    if (name != loadedSensor.name) {
-      name = loadedSensor.name;
-      hasChanged = true;
-    }
-    if (dateUpdated != loadedSensor.dateUpdated) {
-      dateUpdated = loadedSensor.dateUpdated;
-      hasChanged = true;
-    }
-    return hasChanged;
   }
 
   bool isBoolSensor() {
@@ -119,7 +144,7 @@ class LatestValue {
 
 class Device {
   final String mac;
-  final Location location;
+  Location location;
   String? status;
   DateTime? dateUpdated;
   DateTime? dateCreated;
@@ -149,7 +174,8 @@ class Location with ChangeNotifier {
   final String building;
   final String floor;
   final String room;
-  final String name;
+  String name;
+  String? customName;
   String? image;
   int? numberOfDevices;
 
@@ -159,6 +185,7 @@ class Location with ChangeNotifier {
     required this.floor,
     required this.room,
     required this.name,
+    this.customName,
     this.image,
     this.numberOfDevices,
   });
@@ -169,11 +196,46 @@ class Location with ChangeNotifier {
     floor: json['floor'],
     room: json['room'],
     name: json['name'],
+    customName: json['custom_name'],
     image: json['image'] != null ? '$imageUrl${json["image"]}' : null,
     numberOfDevices: json['number_of_devices'],
   );
 
-  String getDevicesToString() {
+  bool update(Location newLocation) {
+    bool hasChanged = false;
+    if (name != newLocation.name) {
+      name = newLocation.name;
+      hasChanged = true;
+    }
+    if (customName != newLocation.customName) {
+      customName = newLocation.customName;
+      hasChanged = true;
+    }
+    if (image != newLocation.image) {
+      image = newLocation.image;
+      hasChanged = true;
+    }
+    if (numberOfDevices != newLocation.numberOfDevices) {
+      numberOfDevices = newLocation.numberOfDevices;
+      hasChanged = true;
+    }
+    return hasChanged;
+  }
+
+  void setCustomName(String newName) {
+    if (name.isEmpty) {
+      customName = name;
+    } else {
+      customName = newName;
+    }
+    notifyListeners();
+  }
+
+  String getCustomNameOrName() {
+    return customName ?? name;
+  }
+
+  String getNumberOfDevices() {
     if (numberOfDevices == 1) {
       return '$numberOfDevices device';
     }
@@ -182,7 +244,7 @@ class Location with ChangeNotifier {
 }
 
 class LocationDetail {
-  final Location location;
+  Location location;
   List<Sensor> sensors;
 
   LocationDetail({

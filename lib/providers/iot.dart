@@ -50,8 +50,8 @@ class IoTDevices with ChangeNotifier {
           as Map<String, dynamic>;
       if (response.statusCode == 200) {
         final Sensor loadedSensor = Sensor.fromJson(responseData);
-        Sensor cachedSensor = _cachedSensors.firstWhere((sensor) => sensor.id == loadedSensor.id);
-        if (cachedSensor.hasChanged(loadedSensor)) {
+        Sensor cachedSensor = getSensorById(sensorId);
+        if (cachedSensor.update(loadedSensor)) {
           notifyListeners();
         }
         return cachedSensor;
@@ -115,6 +115,21 @@ class IoTDevices with ChangeNotifier {
       return false;
     }
     return true;
+  }
+
+  Future<void> setSensorCustomName(int sensorId, String customName) async {
+    final queryParameters = {'name': customName};
+    final url = Uri.parse('$sensorsUrl/$sensorId/user-customization').replace(queryParameters: queryParameters);
+    try {
+      final response = await http.post(url, headers: requestHeaders);
+      if (response.statusCode <= 200 && response.statusCode < 300) {
+        Sensor sensor = getSensorById(sensorId);
+        sensor.setCustomName(customName);
+        notifyListeners();
+      }
+    } catch (error) {
+      rethrow;
+    }
   }
 
   void _toggleInAllLists(int sensorId) {

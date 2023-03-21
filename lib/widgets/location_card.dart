@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iot_devices_manager_app/models/responses/iot.dart';
-import 'package:iot_devices_manager_app/screens/details/locations_detail_screen.dart';
+import 'package:iot_devices_manager_app/screens/iot/details/locations_detail_screen.dart';
 import 'package:iot_devices_manager_app/widgets/common/stroke_text.dart';
 import 'package:provider/provider.dart';
 
@@ -15,10 +15,6 @@ class LocationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final location = Provider.of<Location>(context, listen: false);
-    final args = {
-      'id': location.id,
-      'name': location.name,
-    };
     return GestureDetector(
       onTap: () {
         if (isLocationsScreen) {
@@ -26,7 +22,10 @@ class LocationCard extends StatelessWidget {
         }
         Navigator.of(context).pushNamed(
           LocationDetailScreen.routeName,
-          arguments: args,
+          arguments: {
+            'id': location.id,
+            'name': location.getCustomNameOrName(),
+          },
         );
       },
       child: Card(
@@ -70,22 +69,18 @@ class LocationCard extends StatelessWidget {
                       strokeColor: Colors.white,
                       strokeWidth: 3,
                       child: Text(
-                        location.name,
+                        location.getCustomNameOrName(),
                         style: const TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 25,
                         ),
                       ),
                     ),
-                    // Text(
-                    //   'Floor: ${location.floor}',
-                    //   style: const TextStyle(),
-                    // ),
                     BorderedText(
                       strokeColor: Colors.white,
                       strokeWidth: 3,
                       child: Text(
-                        location.getDevicesToString(),
+                        location.getNumberOfDevices(),
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,

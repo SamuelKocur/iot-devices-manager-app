@@ -10,10 +10,8 @@ import 'auth.dart';
 class Locations with ChangeNotifier {
   static const locationsUrl = '$baseApiUrl/locations';
   final IoTDevices ioTDevicesProvider;
-
   Map<String, String> requestHeaders;
   List<Location> _locations = [];
-  late LocationDetail _locationDetail;
 
   Locations(this.requestHeaders, this.ioTDevicesProvider);
 
@@ -25,8 +23,8 @@ class Locations with ChangeNotifier {
     return [..._locations];
   }
 
-  LocationDetail get locationDetail {
-    return _locationDetail;
+  Location getLocationById(int locationId) {
+    return _locations.firstWhere((location) => location.id == locationId);
   }
 
   Future<void> fetchAndSetLocations() async {
@@ -44,19 +42,49 @@ class Locations with ChangeNotifier {
     }
   }
 
-  Future<void> getLocationById(int locationId) async {
+  Future<LocationDetail?> getAndReloadLocationDetailById(int locationId) async {
     final url = Uri.parse('$locationsUrl/$locationId/');
     try {
       final response = await http.get(url, headers: requestHeaders);
       final responseData = (jsonDecode(response.body) ?? <String, dynamic>{})  as Map<String, dynamic>;
       if (response.statusCode == 200) {
-        LocationDetail locationDetail = LocationDetail.fromJson(responseData);
-        locationDetail.sensors = ioTDevicesProvider.getListOfSensorsById(locationDetail.sensors.map((sensor) => sensor.id).toList());
-        _locationDetail = locationDetail;
+        LocationDetail loadedLocationDetail = LocationDetail.fromJson(responseData);
+        loadedLocationDetail.sensors = ioTDevicesProvider.getListOfSensorsById(
+            loadedLocationDetail.sensors.map((sensor) => sensor.id).toList()
+        );
+        Location cachedLocation = getLocationById(locationId);
+        if (cachedLocation.update(loadedLocationDetail.location)) {
+          notifyListeners();
+        }
+        loadedLocationDetail.location = cachedLocation;
+        setSensorsLocation(loadedLocationDetail);
+        return loadedLocationDetail;
+      }
+    } catch (error) {
+      rethrow;
+    }
+    return null;
+  }
+
+  Future<void> setLocationCustomName(int locationId, String customName) async {
+    final queryParameters = {'name': customName};
+    final url = Uri.parse('$locationsUrl/$locationId/user-customization').replace(queryParameters: queryParameters);
+    try {
+      final response = await http.post(url, headers: requestHeaders);
+      if (response.statusCode <= 200 && response.statusCode < 300) {
+        Location location = getLocationById(locationId);
+        location.setCustomName(customName);
         notifyListeners();
       }
     } catch (error) {
       rethrow;
+    }
+  }
+
+  void setSensorsLocation(LocationDetail locationDetail) {
+    Location location = locationDetail.location;
+    for (var sensor in locationDetail.sensors) {
+      sensor.setLocation(location);
     }
   }
 }

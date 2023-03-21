@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iot_devices_manager_app/models/requests/auth.dart';
+import 'package:iot_devices_manager_app/widgets/common/custom_input_field.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/exceptions/http_exception.dart';
@@ -17,7 +18,7 @@ class PersonalInformationScreen extends StatefulWidget {
 }
 
 class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
-  var _isLoading = false;
+  bool _isLoading = false;
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   String? _firstName;
@@ -40,13 +41,15 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
       );
       return;
     }
+    setState(() {
+      _isLoading = true;
+    });
     try {
       UpdateProfileRequest request = UpdateProfileRequest(
         firstName: _firstName,
         lastName: _lastName,
       );
-      bool res = await Provider.of<Auth>(context, listen: false)
-          .updateProfile(request);
+      bool res = await Provider.of<Auth>(context, listen: false).updateProfile(request);
       if (res) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -64,8 +67,11 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
       );
     } catch (error) {
       DialogUtils.showErrorDialog(
-          context, 'Something went wrong. Please try again later.');
+          context, 'Something went wrong when changing your profile information. Please try again later.');
     }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   Widget _getInfoWidget({
@@ -84,37 +90,11 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
           style: Theme.of(context).textTheme.headline6,
         ),
       ),
-      title: TextField(
+      title: CustomInputFieldWidget(
+        hintText: hintText,
         controller: controller,
         onChanged: onChanged,
         enabled: enabled,
-        decoration: InputDecoration(
-          border: const UnderlineInputBorder(),
-          fillColor: Colors.white,
-          filled: true,
-          hintText: hintText,
-          hintStyle: const TextStyle(
-            color: Colors.grey,
-          ),
-          enabledBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.grey, width: 0.5),
-          ),
-          disabledBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.grey, width: 0.5),
-          ),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 0.0,
-            vertical: 4.0,
-          ),
-          // suffixIcon: controller != null
-          //     ? IconButton(
-          //         icon: const Icon(Icons.highlight_remove_sharp),
-          //         onPressed: () {
-          //           controller.clear();
-          //         },
-          //       )
-          //     : null,
-        ),
       ),
     );
   }
@@ -145,7 +125,8 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                   _firstName = val;
                 },
                 controller: _firstNameController,
-                enabled: true),
+                enabled: true,
+            ),
             _getInfoWidget(
                 context: context,
                 leadingText: 'Last Name',
@@ -154,7 +135,8 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                   _lastName = val;
                 },
                 controller: _lastNameController,
-                enabled: true),
+                enabled: true,
+            ),
             const SizedBox(
               height: 8,
             ),

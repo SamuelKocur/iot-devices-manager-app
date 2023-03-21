@@ -23,11 +23,10 @@ class _DevicesScreenState extends State<DevicesScreen> {
   Future<void> _refreshDevices(BuildContext context) async {
     var selectedTag = _selectedTag == 'all' ? null : _selectedTag;
     try {
-      await Provider.of<IoTDevices>(context, listen: false)
-          .fetchAndSetIoTDevices(type: selectedTag);
+      await Provider.of<IoTDevices>(context, listen: false).fetchAndSetIoTDevices(type: selectedTag);
     } catch (error) {
       DialogUtils.showErrorDialog(
-          context, 'Something went wrong. Please try again later.');
+          context, 'Something went wrong when fetching the devices. Please try again later.');
     }
   }
 
@@ -95,8 +94,7 @@ class _DevicesScreenState extends State<DevicesScreen> {
                                     horizontal: 15,
                                     vertical: 5,
                                   ),
-                                  itemBuilder: (ctx, index) =>
-                                      ChangeNotifierProvider.value(
+                                  itemBuilder: (ctx, index) => ChangeNotifierProvider.value(
                                     value: _selectedTag == 'all'
                                         ? devicesData.sensors[index]
                                         : devicesData.filteredSensors[index],

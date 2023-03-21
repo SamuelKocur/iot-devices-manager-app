@@ -19,12 +19,12 @@ class TableWidget extends StatefulWidget {
 }
 
 class _TableWidgetState extends State<TableWidget> {
+  final List<int> _availableRowsPerPage = [5, 10, 20, 50, 100];
   int _rowPerPage = PaginatedDataTable.defaultRowsPerPage;
   late Sensor _sensor;
 
   var _sortAscending = true;
   var _sortColumnIndex = 0;
-  List<int> _availableRowsPerPage = [5, 10, 20, 50, 100];
 
   void _sortData(List<DataResponse> data, int columnIndex, bool ascending) {
     setState(() {

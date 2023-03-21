@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:iot_devices_manager_app/models/device_types.dart';
 import 'package:iot_devices_manager_app/models/responses/iot.dart';
-import 'package:iot_devices_manager_app/screens/details/device_detail_screen.dart';
-import 'package:iot_devices_manager_app/screens/details/locations_detail_screen.dart';
+import 'package:iot_devices_manager_app/screens/iot/details/device_detail_screen.dart';
+import 'package:iot_devices_manager_app/screens/iot/details/locations_detail_screen.dart';
 import 'package:iot_devices_manager_app/themes/light/text_theme.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/iot.dart';
+import '../providers/location.dart';
 import '../themes/light/elevated_button_theme.dart';
 
 class DeviceCard extends StatelessWidget {
@@ -42,15 +43,14 @@ class DeviceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sensor = Provider.of<Sensor>(context, listen: false);
-    final locationArgs = {
-      'id': sensor.device.location.id,
-      'name': sensor.device.location.name,
-    };
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pushNamed(
           DeviceDetailScreen.routeName,
-          arguments: sensor.id,
+          arguments: {
+            'id': sensor.id,
+            'name': sensor.getCustomNameOrName(),
+          },
         );
       },
       child: Card(
@@ -62,20 +62,19 @@ class DeviceCard extends StatelessWidget {
             padding: const EdgeInsets.all(12.0),
             child: Column(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      sensor.name ?? sensor.type,
-                      style: DeviceCardTextStyle.data,
-                    ),
-                    Consumer<Sensor>(
-                      builder: (ctx, sensor, _) => CircleAvatar(
+                Consumer2<Sensor, Locations>(
+                  builder: (ctx, sensor, locations, _) => Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        sensor.getCustomNameOrName(),
+                        style: DeviceCardTextStyle.data,
+                      ),
+                      CircleAvatar(
                         backgroundColor: Colors.white,
                         child: IconButton(
                           enableFeedback: false,
-                          onPressed: () => Provider.of<IoTDevices>(context, listen: false)
-                              .toggleFavoriteSensors(sensor.id),
+                          onPressed: () => Provider.of<IoTDevices>(context, listen: false).toggleFavoriteSensors(sensor.id),
                           icon: Icon(
                             sensor.isFavorite
                                 ? Icons.favorite
@@ -84,8 +83,8 @@ class DeviceCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 const SizedBox(
                   height: 10,
@@ -118,18 +117,23 @@ class DeviceCard extends StatelessWidget {
                     ),
                     isLocationsScreen == true
                     ? const SizedBox()
-                    : ElevatedButton(
-                      style: WhiteButtonTheme().style,
-                      onPressed: () {
-                        Navigator.of(context).pushNamed(
-                          LocationDetailScreen.routeName,
-                          arguments: locationArgs,
-                        );
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                        child: Text(
-                          sensor.device.location.name,
+                    : Consumer<Locations>(
+                      builder: (ctx, location, _) => ElevatedButton(
+                        style: WhiteButtonTheme().style,
+                        onPressed: () {
+                          Navigator.of(context).pushNamed(
+                            LocationDetailScreen.routeName,
+                            arguments: {
+                              'id': sensor.device.location.id,
+                              'name': sensor.device.location.getCustomNameOrName(),
+                            },
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                          child: Text(
+                            sensor.device.location.getCustomNameOrName(),
+                          ),
                         ),
                       ),
                     ),

@@ -21,7 +21,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
     try {
       await Provider.of<Auth>(context, listen: false).logoutAll();
     } catch (error) {
-      DialogUtils.showErrorDialog(context, 'Something went wrong. Please try again later.');
+      DialogUtils.showErrorDialog(context, 'Something went wrong when trying to logout from all accounts. Please try again later.');
     }
   }
 
@@ -62,7 +62,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
         );
       }
     } catch (error) {
-      DialogUtils.showErrorDialog(context, 'Something went wrong. Please try again later.');
+      DialogUtils.showErrorDialog(context, 'Something went wrong when trying to delete your account. Please try again later.');
     }
   }
 

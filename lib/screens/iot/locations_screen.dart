@@ -17,7 +17,7 @@ class LocationsScreen extends StatelessWidget {
           .fetchAndSetLocations();
     } catch (error) {
       DialogUtils.showErrorDialog(
-          context, 'Something went wrong. Please try again later.');
+          context, 'Something went wrong when trying to fetch all locations. Please try again later.');
     }
   }
 

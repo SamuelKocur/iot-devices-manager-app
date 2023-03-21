@@ -36,7 +36,7 @@ class _FilterDataWidgetState extends State<FilterDataWidget> {
       await Provider.of<DataWarehouse>(context, listen: false).filterData(request, filterProvider);
     } catch (error) {
       DialogUtils.showErrorDialog(
-          context, 'Something went wrong. Please try again later.');
+          context, 'Something went wrong when trying to fetch the data. Please try again later.');
     }
   }
 

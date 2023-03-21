@@ -6,16 +6,16 @@ import 'package:iot_devices_manager_app/providers/iot.dart';
 import 'package:iot_devices_manager_app/providers/location.dart';
 import 'package:iot_devices_manager_app/screens/about_screen.dart';
 import 'package:iot_devices_manager_app/screens/account_details/account_details_screen.dart';
+import 'package:iot_devices_manager_app/screens/account_details/change_password_screen.dart';
 import 'package:iot_devices_manager_app/screens/account_details/personal_information_screen.dart';
 import 'package:iot_devices_manager_app/screens/auth/forgot_password_screen.dart';
 import 'package:iot_devices_manager_app/screens/auth/login_screen.dart';
 import 'package:iot_devices_manager_app/screens/auth/register_screen.dart';
-import 'package:iot_devices_manager_app/screens/account_details/change_password_screen.dart';
-import 'package:iot_devices_manager_app/screens/details/device_detail_screen.dart';
-import 'package:iot_devices_manager_app/screens/iot/home_screen.dart';
-import 'package:iot_devices_manager_app/screens/details/locations_detail_screen.dart';
-import 'package:iot_devices_manager_app/screens/settings_screen.dart';
 import 'package:iot_devices_manager_app/screens/common/splash_screen.dart';
+import 'package:iot_devices_manager_app/screens/iot/details/device_detail_screen.dart';
+import 'package:iot_devices_manager_app/screens/iot/details/locations_detail_screen.dart';
+import 'package:iot_devices_manager_app/screens/iot/home_screen.dart';
+import 'package:iot_devices_manager_app/screens/settings_screen.dart';
 import 'package:iot_devices_manager_app/themes/light/bar_theme.dart';
 import 'package:iot_devices_manager_app/themes/light/card_theme.dart';
 import 'package:iot_devices_manager_app/themes/light/check_box.dart';
@@ -24,48 +24,53 @@ import 'package:iot_devices_manager_app/themes/light/input_decoretion_theme.dart
 import 'package:iot_devices_manager_app/themes/light/text_button_theme.dart';
 import 'package:iot_devices_manager_app/themes/light/text_theme.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 
 import './screens/auth/welcome_screen.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+
+  List<SingleChildStatelessWidget> _getProviders(BuildContext context) {
+    return [
+      ChangeNotifierProvider<Auth>(
+        create: (_) => Auth(),
+      ),
+      ChangeNotifierProvider<FilterResponse>(
+        create: (_) => FilterResponse(
+          dateFormat: 'd MMM y H:mm',
+          data: [],
+        ),
+      ),
+      ChangeNotifierProxyProvider<Auth, IoTDevices>(
+          create: (ctx) => IoTDevices({}),
+          update: (ctx, auth, previousDevices) =>
+              previousDevices ?? IoTDevices({})
+                ..update(auth.requestHeader)),
+      ChangeNotifierProxyProvider<Auth, Locations>(
+          create: (ctx) =>
+              Locations({}, Provider.of<IoTDevices>(ctx, listen: false)),
+          update: (ctx, auth, previousLocations) => previousLocations ??
+              Locations({}, Provider.of<IoTDevices>(ctx, listen: false))
+            ..update(
+              auth.requestHeader,
+            )),
+      ChangeNotifierProxyProvider<Auth, DataWarehouse>(
+          create: (ctx) => DataWarehouse({}),
+          update: (ctx, auth, _) => _ ?? DataWarehouse({})
+            ..update(auth.requestHeader)),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<Auth>(
-          create: (_) => Auth(),
-        ),
-        ChangeNotifierProvider<FilterResponse>(
-          create: (_) => FilterResponse(
-            dateFormat: 'd MMM y H:mm',
-            data: [],
-          ),
-        ),
-        ChangeNotifierProxyProvider<Auth, IoTDevices>(
-            create: (ctx) => IoTDevices({}),
-            update: (ctx, auth, previousDevices) => previousDevices ?? IoTDevices(
-                {})..update(auth.requestHeader)
-        ),
-        ChangeNotifierProxyProvider<Auth, Locations>(
-            create: (ctx) => Locations({}, Provider.of<IoTDevices>(ctx, listen: false)),
-            update: (ctx, auth, previousLocations) => previousLocations ?? Locations(
-                {}, Provider.of<IoTDevices>(ctx, listen: false))..update(auth.requestHeader, )
-        ),
-        ChangeNotifierProxyProvider<Auth, DataWarehouse>(
-            create: (ctx) => DataWarehouse({}),
-            update: (ctx, auth, _) => _ ?? DataWarehouse(
-                {})..update(auth.requestHeader)
-        ),
-      ],
+      providers: _getProviders(context),
       child: Consumer<Auth>(
         builder: (ctx, auth, child) => MaterialApp(
           title: 'Smart-IoT',
           theme: ThemeData(
-            // remove the animation for all IconButton widgets in the app
-            // splashColor: Colors.transparent,
-            // highlightColor: Colors.transparent,
             colorScheme: const ColorScheme.light().copyWith(
               primary: const Color.fromRGBO(42, 179, 129, 1),
               background: const Color.fromRGBO(247, 247, 247, 1),
@@ -114,7 +119,7 @@ class MyApp extends StatelessWidget {
             PersonalInformationScreen.routeName: (ctx) => const PersonalInformationScreen(),
             HomeScreen.routeName: (ctx) => const HomeScreen(),
             DeviceDetailScreen.routeName: (ctx) => const DeviceDetailScreen(),
-            LocationDetailScreen.routeName: (ctx) => const LocationDetailScreen(),
+            LocationDetailScreen.routeName: (ctx) => LocationDetailScreen(),
           },
         ),
       ),

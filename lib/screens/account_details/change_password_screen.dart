@@ -53,7 +53,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       );
     } catch (error) {
       DialogUtils.showErrorDialog(
-          context, 'Something went wrong. Please try again later.');
+          context, 'Something went wrong when changing your password. Please try again later.');
     }
     setState(() {
       _isLoading = false;
