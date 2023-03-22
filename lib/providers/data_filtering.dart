@@ -6,13 +6,13 @@ import 'package:iot_devices_manager_app/common/date_format.dart';
 import 'package:iot_devices_manager_app/models/requests/filter_data.dart';
 import 'package:iot_devices_manager_app/models/responses/filter_data.dart';
 
-import 'auth.dart';
+import 'user.dart';
 
-class DataWarehouse with ChangeNotifier {
-  static const dataWarehouseUrl = '$baseApiUrl/data-warehouse';
+class DataFiltering with ChangeNotifier {
+  static const dataWarehouseUrl = '$baseApiUrl/data';
   Map<String, String> requestHeaders;
 
-  DataWarehouse(this.requestHeaders);
+  DataFiltering(this.requestHeaders);
 
   void update(Map<String, String> paRequestHeaders) {
     requestHeaders = paRequestHeaders;

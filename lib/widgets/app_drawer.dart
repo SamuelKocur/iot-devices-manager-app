@@ -6,7 +6,7 @@ import 'package:iot_devices_manager_app/screens/settings_screen.dart';
 import 'package:provider/provider.dart';
 
 import './common/error_dialog.dart';
-import '../providers/auth.dart';
+import '../providers/user.dart';
 
 class AppDrawer extends StatefulWidget {
   const AppDrawer({Key? key}) : super(key: key);
@@ -20,7 +20,7 @@ class _AppDrawerState extends State<AppDrawer> {
 
   void _logOut() {
     try {
-      Provider.of<Auth>(context, listen: false).logout();
+      Provider.of<User>(context, listen: false).logout();
     } catch (error) {
       showDialog(
         context: context,
@@ -79,7 +79,7 @@ class _AppDrawerState extends State<AppDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    final firstName = Provider.of<Auth>(context).firstName;
+    final firstName = Provider.of<User>(context).firstName;
     return Drawer(
       backgroundColor: Colors.white,
       child: SingleChildScrollView(

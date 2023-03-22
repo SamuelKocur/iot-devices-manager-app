@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:iot_devices_manager_app/models/requests/filter_data.dart';
 import 'package:iot_devices_manager_app/models/responses/filter_data.dart';
-import 'package:iot_devices_manager_app/providers/data_warehouse.dart';
+import 'package:iot_devices_manager_app/providers/data_filtering.dart';
 import 'package:iot_devices_manager_app/themes/light/drop_down_menu.dart';
 import 'package:iot_devices_manager_app/widgets/device_detail/graph_widget.dart';
 import 'package:iot_devices_manager_app/widgets/device_detail/table_widget.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/data_filtering.dart';
+import '../../providers/user.dart';
 import '../../themes/light/text_theme.dart';
 import '../common/error_dialog.dart';
 
@@ -21,7 +22,7 @@ class FilterDataWidget extends StatefulWidget {
 }
 
 class _FilterDataWidgetState extends State<FilterDataWidget> {
-  String _dataRangeCurrentValue = DateRangeOptions.pastWeek.text;
+  String _dateRangeCurrentValue = DateRangeOptions.pastWeek.text;
   DateRange _dateRange = DateRangeOptions.getDateTime(DateRangeOptions.pastWeek.text);
 
 
@@ -33,25 +34,25 @@ class _FilterDataWidgetState extends State<FilterDataWidget> {
         sensorId: widget.sensorId,
       );
       FilterResponse filterProvider = Provider.of<FilterResponse>(context, listen: false);
-      await Provider.of<DataWarehouse>(context, listen: false).filterData(request, filterProvider);
+      await Provider.of<DataFiltering>(context, listen: false).filterData(request, filterProvider);
     } catch (error) {
       DialogUtils.showErrorDialog(
           context, 'Something went wrong when trying to fetch the data. Please try again later.');
     }
   }
 
-  List<PopupMenuItem<String>> _dataRangePopupMenu() {
+  List<DropdownMenuItem<String>> _dateRangeDropDownMenu() {
     return DateRangeOptions.values
         .map(
-          (e) => _dataRangeCurrentValue == e.text
-              ? PopupMenuItem(
+          (e) => _dateRangeCurrentValue == e.text
+              ? DropdownMenuItem(
                   value: e.text,
                   child: Text(
                     e.text,
                     style: SelectedDropDownItemStyle.data,
                   ),
                 )
-              : PopupMenuItem(
+              : DropdownMenuItem(
                   value: e.text,
                   child: Text(
                     e.text,
@@ -70,7 +71,7 @@ class _FilterDataWidgetState extends State<FilterDataWidget> {
     DateRange dateRange = DateRangeOptions.getDateTime(newDateRangeOption);
 
     setState(() {
-      _dataRangeCurrentValue = newDateRangeOption;
+      _dateRangeCurrentValue = newDateRangeOption;
       _dateRange = dateRange;
     });
   }
@@ -101,7 +102,7 @@ class _FilterDataWidgetState extends State<FilterDataWidget> {
         );
         fromRange = value;
         setState(() {
-          _dataRangeCurrentValue = newDateRangeOption;
+          _dateRangeCurrentValue = newDateRangeOption;
           _dateRange = DateRange(
               fromRange.start,
               fromRange.end
@@ -111,6 +112,14 @@ class _FilterDataWidgetState extends State<FilterDataWidget> {
       }
     });
     return;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    DateRangeOptions rangeOption = Provider.of<User>(context, listen: false).userAppSettings.dateRangeOption;
+    _dateRange = DateRangeOptions.getDateTime(rangeOption.text);
+    _dateRangeCurrentValue = rangeOption.text;
   }
 
   @override
@@ -126,24 +135,15 @@ class _FilterDataWidgetState extends State<FilterDataWidget> {
             const SizedBox(
               width: 10,
             ),
-            Text(
-              _dataRangeCurrentValue,
-              style: Theme.of(context).textTheme.headline5,
-            ),
-            PopupMenuButton(
-              onSelected: (String? newValue) {
+            DropdownButton(
+              onChanged: (String? newValue) {
                 if (newValue != null) {
                   _setDateRange(newValue, context);
                 }
               },
-              itemBuilder: (ctx) => _dataRangePopupMenu(),
-              child: const Padding(
-                padding: EdgeInsets.only(left: 10),
-                child: Icon(
-                  Icons.arrow_drop_down_outlined,
-                ),
-              ),
-            )
+              items: _dateRangeDropDownMenu(),
+              value: _dateRangeCurrentValue,
+            ),
           ],
         ),
         FutureBuilder(

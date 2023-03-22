@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:iot_devices_manager_app/models/requests/auth.dart';
 import 'package:iot_devices_manager_app/widgets/common/custom_input_field.dart';
+import 'package:iot_devices_manager_app/widgets/common/submit_button.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/exceptions/http_exception.dart';
-import '../../providers/auth.dart';
+import '../../providers/user.dart';
 import '../../widgets/common/error_dialog.dart';
 
 class PersonalInformationScreen extends StatefulWidget {
@@ -49,7 +50,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
         firstName: _firstName,
         lastName: _lastName,
       );
-      bool res = await Provider.of<Auth>(context, listen: false).updateProfile(request);
+      bool res = await Provider.of<User>(context, listen: false).updateProfile(request);
       if (res) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -101,7 +102,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Auth auth = Provider.of<Auth>(context, listen: false);
+    User auth = Provider.of<User>(context, listen: false);
     _firstNameController.text = auth.firstName ?? 'First name';
     _lastNameController.text = auth.lastName ?? 'Last name';
     return Scaffold(
@@ -110,55 +111,51 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
         title: const Text('Personal Information'),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _getInfoWidget(
-              context: context,
-              leadingText: 'Email',
-              hintText: auth.email ?? 'email',
-            ),
-            _getInfoWidget(
-                context: context,
-                leadingText: 'First Name',
-                hintText: auth.firstName ?? 'first name',
-                onChanged: (val) {
-                  _firstName = val;
-                },
-                controller: _firstNameController,
-                enabled: true,
-            ),
-            _getInfoWidget(
-                context: context,
-                leadingText: 'Last Name',
-                hintText: auth.lastName ?? 'last name',
-                onChanged: (val) {
-                  _lastName = val;
-                },
-                controller: _lastNameController,
-                enabled: true,
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Container(
-              constraints: const BoxConstraints(maxWidth: 500),
-              width: double.infinity,
-              padding: const EdgeInsets.all(15),
-              child: ElevatedButton(
-                onPressed: _submit,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                  ),
-                  child: _isLoading
-                      ? const CircularProgressIndicator()
-                      : Text(
-                          'Submit'.toUpperCase(),
-                        ),
+        child: Center(
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 500),
+            width: double.infinity,
+            child: Column(
+              children: [
+                _getInfoWidget(
+                  context: context,
+                  leadingText: 'Email',
+                  hintText: auth.email ?? 'email',
                 ),
-              ),
+                _getInfoWidget(
+                    context: context,
+                    leadingText: 'First Name',
+                    hintText: auth.firstName ?? 'first name',
+                    onChanged: (val) {
+                      _firstName = val;
+                    },
+                    controller: _firstNameController,
+                    enabled: true,
+                ),
+                _getInfoWidget(
+                    context: context,
+                    leadingText: 'Last Name',
+                    hintText: auth.lastName ?? 'last name',
+                    onChanged: (val) {
+                      _lastName = val;
+                    },
+                    controller: _lastNameController,
+                    enabled: true,
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                Container(
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  padding: const EdgeInsets.all(15),
+                  child: SubmitButton(
+                    isLoading: _isLoading,
+                    submit: _submit,
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/responses/iot/sensor.dart';
-import 'auth.dart';
+import 'user.dart';
 
 class IoTDevices with ChangeNotifier {
   static const sensorsUrl = '$baseApiUrl/sensors';

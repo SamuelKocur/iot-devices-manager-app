@@ -3,7 +3,7 @@ import 'package:iot_devices_manager_app/screens/account_details/personal_informa
 import 'package:iot_devices_manager_app/screens/account_details/change_password_screen.dart';
 import 'package:provider/provider.dart';
 
-import '../../providers/auth.dart';
+import '../../providers/user.dart';
 import '../../widgets/common/error_dialog.dart';
 
 class AccountDetailsScreen extends StatefulWidget {
@@ -19,7 +19,15 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
 
   Future<void> _logoutAll() async {
     try {
-      await Provider.of<Auth>(context, listen: false).logoutAll();
+      bool res = await Provider.of<User>(context, listen: false).logoutAll();
+      if (res == true) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('You were logout from all your devices.'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
     } catch (error) {
       DialogUtils.showErrorDialog(context, 'Something went wrong when trying to logout from all accounts. Please try again later.');
     }
@@ -39,9 +47,9 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
           ),
           TextButton(
             onPressed: () {
+              Navigator.of(ctx).pop();
               _logoutAll();
-              // Navigator.of(ctx).pop();
-              Navigator.of(ctx, rootNavigator: true).pop();
+              Navigator.of(context, rootNavigator: true).pop();
             },
             child: const Text('Log Out'),
           )
@@ -52,7 +60,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
 
   Future<void> _deleteAccount() async {
     try {
-      bool res = await Provider.of<Auth>(context, listen: true).deleteAccount();
+      bool res = await Provider.of<User>(context, listen: true).deleteAccount();
       if (res == true) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -80,6 +88,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
           ),
           TextButton(
             onPressed: () {
+              Navigator.of(ctx).pop();
               _deleteAccount();
               Navigator.of(context, rootNavigator: true).pop();
             },
@@ -97,61 +106,63 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
       appBar: AppBar(
         title: const Text('Account'),
       ),
-      body: Column(
-        children: [
-          ListTile(
-            title: Text(
-              'Personal Information',
-              style: Theme.of(context).textTheme.headline6,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            ListTile(
+              title: Text(
+                'Personal Information',
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              onTap: () {
+                Navigator.of(context).pushNamed(PersonalInformationScreen.routeName);
+              },
+              trailing: const IconButton(
+                icon: Icon(Icons.keyboard_arrow_right_outlined),
+                onPressed: null,
+              ),
             ),
-            onTap: () {
-              Navigator.of(context).pushNamed(PersonalInformationScreen.routeName);
-            },
-            trailing: const IconButton(
-              icon: Icon(Icons.keyboard_arrow_right_outlined),
-              onPressed: null,
+            ListTile(
+              title: Text(
+                'Change Password',
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              onTap: () {
+                Navigator.of(context).pushNamed(ChangePasswordScreen.routeName);
+              },
+              trailing: const IconButton(
+                icon: Icon(Icons.keyboard_arrow_right_outlined),
+                onPressed: null,
+              ),
             ),
-          ),
-          ListTile(
-            title: Text(
-              'Change Password',
-              style: Theme.of(context).textTheme.headline6,
+            ListTile(
+              title: Text(
+                'Logout from all Devices',
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              onTap: () {
+                _showLogoutConfirmDialog();
+              },
+              trailing: const IconButton(
+                icon: Icon(Icons.keyboard_arrow_right_outlined),
+                onPressed: null,
+              ),
             ),
-            onTap: () {
-              Navigator.of(context).pushNamed(ChangePasswordScreen.routeName);
-            },
-            trailing: const IconButton(
-              icon: Icon(Icons.keyboard_arrow_right_outlined),
-              onPressed: null,
-            ),
-          ),
-          ListTile(
-            title: Text(
-              'Logout from all Devices',
-              style: Theme.of(context).textTheme.headline6,
-            ),
-            onTap: () {
-              _showLogoutConfirmDialog();
-            },
-            trailing: const IconButton(
-              icon: Icon(Icons.keyboard_arrow_right_outlined),
-              onPressed: null,
-            ),
-          ),
-          ListTile(
-            title: Text(
-              'Delete Account',
-              style: Theme.of(context).textTheme.headline6,
-            ),
-            onTap: () {
-              _showDeleteAccountConfirmDialog();
-            },
-            trailing: const IconButton(
-              icon: Icon(Icons.keyboard_arrow_right_outlined),
-              onPressed: null,
-            ),
-          )
-        ],
+            ListTile(
+              title: Text(
+                'Delete Account',
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              onTap: () {
+                _showDeleteAccountConfirmDialog();
+              },
+              trailing: const IconButton(
+                icon: Icon(Icons.keyboard_arrow_right_outlined),
+                onPressed: null,
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

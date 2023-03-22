@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iot_devices_manager_app/models/app_settings.dart';
 import 'package:iot_devices_manager_app/models/responses/filter_data.dart';
 import 'package:iot_devices_manager_app/providers/iot.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +8,7 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import '../../common/date_format.dart';
 import '../../models/data_filtering.dart';
 import '../../models/responses/iot/sensor.dart';
+import '../../providers/user.dart';
 
 class GraphWidget extends StatefulWidget {
   DateRange dateRange;
@@ -24,6 +26,7 @@ class GraphWidget extends StatefulWidget {
 
 class _GraphWidgetState extends State<GraphWidget> {
   late Sensor _sensor;
+  late UserAppSettings _userAppSettings;
   bool _showAvgValue = true;
   bool _showMinValue = false;
   bool _showMaxValue = false;
@@ -95,6 +98,16 @@ class _GraphWidgetState extends State<GraphWidget> {
           ];
   }
 
+  MarkerSettings _getMarketSettings() {
+    return MarkerSettings(
+      isVisible: _userAppSettings.graphIncludePoints,
+    );
+  }
+
+  double _getAnimationDuration() {
+    return _userAppSettings.graphAnimate ? 1500 : 0;
+  }
+
   Widget _buildGraph() {
     return Card(
       margin: const EdgeInsets.all(10),
@@ -118,40 +131,40 @@ class _GraphWidgetState extends State<GraphWidget> {
                 series: _sensor.isBoolSensor() ?
                 <StepLineSeries<DataResponse, String>> [
                   StepLineSeries<DataResponse, String>(
+                    animationDuration: _getAnimationDuration(),
+                    markerSettings: _getMarketSettings(),
                     color: Theme.of(context).colorScheme.primary,
                     dataSource: filterResponse.filterJustSelected(),
-                    xValueMapper: (DataResponse data, _) =>
-                        DateFormatter.byFormat(
-                            data.date, filterResponse.dateFormat),
+                    xValueMapper: (DataResponse data, _) => DateFormatter.byFormat(data.date, filterResponse.dateFormat),
                     yValueMapper: (DataResponse data, _) => data.totalValue,
                   ),
                 ]
                 : <LineSeries<DataResponse, String>>[
                   if (_showMinValue == true)
                     LineSeries<DataResponse, String>(
+                      animationDuration: _getAnimationDuration(),
+                      markerSettings: _getMarketSettings(),
                       color: Colors.blue,
                       dataSource: filterResponse.filterJustSelected(),
-                      xValueMapper: (DataResponse data, _) =>
-                          DateFormatter.byFormat(
-                              data.date, filterResponse.dateFormat),
+                      xValueMapper: (DataResponse data, _) => DateFormatter.byFormat(data.date, filterResponse.dateFormat),
                       yValueMapper: (DataResponse data, _) => data.minValue,
                     ),
                   if (_showAvgValue == true)
                     LineSeries<DataResponse, String>(
+                      animationDuration: _getAnimationDuration(),
+                      markerSettings: _getMarketSettings(),
                       color: Theme.of(context).colorScheme.primary,
                       dataSource: filterResponse.filterJustSelected(),
-                      xValueMapper: (DataResponse data, _) =>
-                          DateFormatter.byFormat(
-                              data.date, filterResponse.dateFormat),
+                      xValueMapper: (DataResponse data, _) => DateFormatter.byFormat(data.date, filterResponse.dateFormat),
                       yValueMapper: (DataResponse data, _) => data.avgValue,
                     ),
                   if (_showMaxValue == true)
                     LineSeries<DataResponse, String>(
+                      animationDuration: _getAnimationDuration(),
+                      markerSettings: _getMarketSettings(),
                       color: Colors.red,
                       dataSource: filterResponse.filterJustSelected(),
-                      xValueMapper: (DataResponse data, _) =>
-                          DateFormatter.byFormat(
-                              data.date, filterResponse.dateFormat),
+                      xValueMapper: (DataResponse data, _) => DateFormatter.byFormat(data.date, filterResponse.dateFormat),
                       yValueMapper: (DataResponse data, _) => data.maxValue,
                     )
                 ],
@@ -166,7 +179,6 @@ class _GraphWidgetState extends State<GraphWidget> {
                 zoomPanBehavior: ZoomPanBehavior(
                   enablePinching: true,
                   enableDoubleTapZooming: true,
-                  // enableSelectionZooming: true,
                   maximumZoomLevel: 0.5,
                 ),
               ),
@@ -175,6 +187,15 @@ class _GraphWidgetState extends State<GraphWidget> {
         ],
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _userAppSettings = Provider.of<User>(context, listen: false).userAppSettings;
+    _showMinValue = _userAppSettings.graphShowMin;
+    _showAvgValue = _userAppSettings.graphShowAvg;
+    _showMaxValue = _userAppSettings.graphShowMax;
   }
 
   @override

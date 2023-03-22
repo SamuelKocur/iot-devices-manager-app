@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:iot_devices_manager_app/models/app_settings.dart';
 
 import '../models/exceptions/http_exception.dart';
 import '../models/requests/auth.dart';
@@ -13,11 +14,11 @@ import '../storage/storage_helper.dart';
 // needed for communication with backend server API
 // const baseApiUrl = 'http://130.162.218.188/api';
 // const imageUrl = 'http://130.162.218.188';
-const baseApiUrl = 'http://192.168.68.112:8000/api';
-const imageUrl = 'http://192.168.68.112:8000';
+const baseApiUrl = 'http://192.168.15.30:8000/api';
+const imageUrl = 'http://192.168.15.30:8000';
 
-class Auth with ChangeNotifier {
-  static const authUrl = '$baseApiUrl/user';
+class User with ChangeNotifier {
+  static const userUrl = '$baseApiUrl/user';
   String? _token;
   DateTime? _expiryDate;
   int? _userId;
@@ -26,6 +27,7 @@ class Auth with ChangeNotifier {
   String? _lastName;
   Timer? _authTimer;
   bool _isLoggedIn = false;
+  UserAppSettings _userAppSettings = UserAppSettings();
 
   bool get isLoggedIn => _isLoggedIn;
 
@@ -54,6 +56,10 @@ class Auth with ChangeNotifier {
     return _lastName;
   }
 
+  UserAppSettings get userAppSettings {
+    return _userAppSettings;
+  }
+
   Map<String, String> get requestHeader => {
         'Content-Type': 'application/json',
         'Authorization': 'Token $_token',
@@ -61,7 +67,7 @@ class Auth with ChangeNotifier {
 
 
   Future<String?> _checkTokenValidity() async {
-    final url = Uri.parse('$authUrl/validate-token/');
+    final url = Uri.parse('$userUrl/validate-token/');
     try {
       _isLoggedIn = false;
       final response = await http.get(
@@ -83,7 +89,7 @@ class Auth with ChangeNotifier {
     Map<String, dynamic> jsonRequest,
     String urlSegment,
   ) async {
-    final url = Uri.parse('$authUrl/$urlSegment/');
+    final url = Uri.parse('$userUrl/$urlSegment/');
     try {
       final response = await http.post(
         url,
@@ -92,9 +98,7 @@ class Auth with ChangeNotifier {
       );
       final responseData = json.decode(response.body) as Map<String, dynamic>;
       if (response.statusCode >= 400) {
-        throw HttpException(
-            responseData.values.join().replaceAll('[', '').replaceAll(']', '')
-        );
+        throw HttpException(responseData.values.join().replaceAll('[', '').replaceAll(']', ''));
       }
       final authResponse = AuthDataResponse.fromJson(responseData);
       _token = authResponse.token;
@@ -156,7 +160,7 @@ class Auth with ChangeNotifier {
   }
 
   Future<bool> logoutLogic(String urlSegment) async {
-    final url = Uri.parse('$authUrl/$urlSegment/');
+    final url = Uri.parse('$userUrl/$urlSegment/');
     final response = await http.post(
       url,
       headers: requestHeader,
@@ -200,7 +204,7 @@ class Auth with ChangeNotifier {
   }
 
   Future<bool> deleteAccount() async {
-    final url = Uri.parse('$authUrl/delete-account/');
+    final url = Uri.parse('$userUrl/delete-account/');
     try {
       final response = await http.delete(
         url,
@@ -208,9 +212,7 @@ class Auth with ChangeNotifier {
       );
       final responseData = json.decode(response.body) as Map<String, dynamic>;
       if (response.statusCode >= 400) {
-        throw HttpException(
-            responseData.values.join().replaceAll('[', '').replaceAll(']', '')
-        );
+        throw HttpException(responseData.values.join().replaceAll('[', '').replaceAll(']', ''));
       }
       logoutAll();
     } catch (error) {
@@ -220,7 +222,7 @@ class Auth with ChangeNotifier {
   }
 
   Future<bool> changePassword(ChangePasswordRequest request) async {
-    final url = Uri.parse('$authUrl/change-password/');
+    final url = Uri.parse('$userUrl/change-password/');
     try {
       final response = await http.post(
         url,
@@ -229,9 +231,7 @@ class Auth with ChangeNotifier {
       );
       final responseData = json.decode(response.body) as Map<String, dynamic>;
       if (response.statusCode >= 400) {
-        throw HttpException(
-            responseData.values.join().replaceAll('[', '').replaceAll(']', '')
-        );
+        throw HttpException(responseData.values.join().replaceAll('[', '').replaceAll(']', ''));
       }
     } catch (error) {
       rethrow;
@@ -240,7 +240,7 @@ class Auth with ChangeNotifier {
   }
 
   Future<bool> updateProfile(UpdateProfileRequest request) async {
-    final url = Uri.parse('$authUrl/update-profile/');
+    final url = Uri.parse('$userUrl/update-profile/');
     try {
       final response = await http.put(
         url,
@@ -249,9 +249,7 @@ class Auth with ChangeNotifier {
       );
       final responseData = json.decode(response.body) as Map<String, dynamic>;
       if (response.statusCode >= 400) {
-        throw HttpException(
-            responseData.values.join().replaceAll('[', '').replaceAll(']', '')
-        );
+        throw HttpException(responseData.values.join().replaceAll('[', '').replaceAll(']', ''));
       }
       final storageHelper = await _getStorageHelper();
 
@@ -266,6 +264,42 @@ class Auth with ChangeNotifier {
       extractedUserData.userInfo.firstName = _firstName ?? extractedUserData.userInfo.firstName;
       extractedUserData.userInfo.lastName = _lastName ?? extractedUserData.userInfo.lastName;
       storageHelper.setValue('userData', json.encode(extractedUserData.toJson()));
+    } catch (error) {
+      rethrow;
+    }
+    return true;
+  }
+
+  Future<void> fetchAppSettings() async {
+    final url = Uri.parse('$userUrl/customize-settings/');
+    try {
+      final response = await http.get(url, headers: requestHeader);
+      final responseData = (jsonDecode(response.body) ?? <String, dynamic>{})  as Map<String, dynamic>;
+      if (response.statusCode == 200) {
+        final UserAppSettings loadedAppSettings = UserAppSettings.fromJson(responseData);
+        _userAppSettings = loadedAppSettings;
+        notifyListeners();
+      }
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<bool> updateAppSettings(UserAppSettings request) async {
+    final url = Uri.parse('$userUrl/customize-settings/');
+    try {
+      final response = await http.post(
+        url,
+        headers: requestHeader,
+        body: json.encode(request.toJson()),
+      );
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
+      if (response.statusCode >= 400) {
+        throw HttpException(responseData.values.join().replaceAll('[', '').replaceAll(']', '')
+        );
+      }
+      _userAppSettings.update(request);
+      notifyListeners();
     } catch (error) {
       rethrow;
     }

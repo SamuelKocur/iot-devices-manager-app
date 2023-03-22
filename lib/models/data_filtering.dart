@@ -13,6 +13,14 @@ enum DateRangeOptions {
   dataRange('Select A Data Range');
 
   const DateRangeOptions(this.text);
+
+  static DateRangeOptions getDateRangeOptionByText(String text) {
+    return DateRangeOptions.values.firstWhere(
+            (option) => option.text == text,
+      orElse: () => DateRangeOptions.pastWeek,
+    );
+  }
+
   final String text;
 
   static DateRange getDateTime(

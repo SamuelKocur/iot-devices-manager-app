@@ -2,9 +2,15 @@ import 'package:intl/intl.dart';
 
 
 class DateFormatter {
- static const dateTimeFormat = 'd MMM yyyy H:mm';
+ static const dateTimeFormat = 'dd-MM-yyyy H:mm';
  static const dateFormat = 'd MMM yyyy';
  static const dateGraphFormat = 'd MMM y H:mm';
+ static const availableDateTimeFormats = [
+  'MMM d yyyy, H:mm',
+  'dd.MM.yyyy H:mm',
+  'dd-MM-yyyy H:mm',
+  'dd/MM/yyyy H:mm',
+ ];
 
  static String dateTime(DateTime date) {
   return DateFormat(dateTimeFormat).format(date.toLocal());

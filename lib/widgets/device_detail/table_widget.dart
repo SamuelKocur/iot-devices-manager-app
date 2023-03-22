@@ -80,7 +80,7 @@ class _TableWidgetState extends State<TableWidget> {
       child: Consumer<FilterResponse>(builder: (ctx, filterResponse, _) {
         return PaginatedDataTable(
           rowsPerPage: _getRowPerPage(filterResponse.data.length),
-          availableRowsPerPage: [..._availableRowsPerPage, filterResponse.data.length],
+          availableRowsPerPage: [..._availableRowsPerPage, filterResponse.data.isEmpty ? 5 : filterResponse.data.length],
           onRowsPerPageChanged: (value) {
             if (value != null) {
               setState(() {

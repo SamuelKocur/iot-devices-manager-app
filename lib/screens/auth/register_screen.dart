@@ -5,7 +5,7 @@ import 'package:iot_devices_manager_app/widgets/auht_or_divider.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/exceptions/http_exception.dart';
-import '../../providers/auth.dart';
+import '../../providers/user.dart';
 import '../../widgets/common/error_dialog.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -35,7 +35,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _isLoading = true;
     });
     try {
-      await Provider.of<Auth>(context, listen: false).register(_registerRequest);
+      await Provider.of<User>(context, listen: false).register(_registerRequest);
     } on HttpException catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

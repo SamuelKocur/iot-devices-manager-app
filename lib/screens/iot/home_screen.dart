@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:iot_devices_manager_app/providers/iot.dart';
+import 'package:iot_devices_manager_app/providers/user.dart';
 
 import 'package:iot_devices_manager_app/screens/iot/devices_screen.dart';
 import 'package:iot_devices_manager_app/screens/iot/favorites_screen.dart';
@@ -35,6 +36,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     super.initState();
     initializeDateFormatting();
     _tabController = TabController(initialIndex: 0, length: 3, vsync: this);
+    Provider.of<User>(context, listen: false).fetchAppSettings();
     Provider.of<Locations>(context, listen: false).fetchAndSetLocations();
     Provider.of<IoTDevices>(context, listen: false).fetchAndSetIoTDevices();
   }

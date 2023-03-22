@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iot_devices_manager_app/models/responses/filter_data.dart';
-import 'package:iot_devices_manager_app/providers/auth.dart';
-import 'package:iot_devices_manager_app/providers/data_warehouse.dart';
+import 'package:iot_devices_manager_app/providers/user.dart';
+import 'package:iot_devices_manager_app/providers/data_filtering.dart';
 import 'package:iot_devices_manager_app/providers/iot.dart';
 import 'package:iot_devices_manager_app/providers/location.dart';
 import 'package:iot_devices_manager_app/screens/about_screen.dart';
@@ -34,8 +34,8 @@ class MyApp extends StatelessWidget {
 
   List<SingleChildStatelessWidget> _getProviders(BuildContext context) {
     return [
-      ChangeNotifierProvider<Auth>(
-        create: (_) => Auth(),
+      ChangeNotifierProvider<User>(
+        create: (_) => User(),
       ),
       ChangeNotifierProvider<FilterResponse>(
         create: (_) => FilterResponse(
@@ -43,23 +43,26 @@ class MyApp extends StatelessWidget {
           data: [],
         ),
       ),
-      ChangeNotifierProxyProvider<Auth, IoTDevices>(
+      ChangeNotifierProxyProvider<User, IoTDevices>(
           create: (ctx) => IoTDevices({}),
           update: (ctx, auth, previousDevices) =>
               previousDevices ?? IoTDevices({})
-                ..update(auth.requestHeader)),
-      ChangeNotifierProxyProvider<Auth, Locations>(
+                ..update(auth.requestHeader),
+      ),
+      ChangeNotifierProxyProvider<User, Locations>(
           create: (ctx) =>
               Locations({}, Provider.of<IoTDevices>(ctx, listen: false)),
           update: (ctx, auth, previousLocations) => previousLocations ??
               Locations({}, Provider.of<IoTDevices>(ctx, listen: false))
             ..update(
               auth.requestHeader,
-            )),
-      ChangeNotifierProxyProvider<Auth, DataWarehouse>(
-          create: (ctx) => DataWarehouse({}),
-          update: (ctx, auth, _) => _ ?? DataWarehouse({})
-            ..update(auth.requestHeader)),
+            ),
+      ),
+      ChangeNotifierProxyProvider<User, DataFiltering>(
+          create: (ctx) => DataFiltering({}),
+          update: (ctx, auth, _) => _ ?? DataFiltering({})
+            ..update(auth.requestHeader),
+      ),
     ];
   }
 
@@ -67,7 +70,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: _getProviders(context),
-      child: Consumer<Auth>(
+      child: Consumer<User>(
         builder: (ctx, auth, child) => MaterialApp(
           title: 'Smart-IoT',
           theme: ThemeData(

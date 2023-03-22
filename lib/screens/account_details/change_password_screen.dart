@@ -3,8 +3,9 @@ import 'package:iot_devices_manager_app/models/requests/auth.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/exceptions/http_exception.dart';
-import '../../providers/auth.dart';
+import '../../providers/user.dart';
 import '../../widgets/common/error_dialog.dart';
+import '../../widgets/common/submit_button.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   static const routeName = '/change-password';
@@ -35,7 +36,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       _isLoading = true;
     });
     try {
-      bool res = await Provider.of<Auth>(context, listen: false).changePassword(_changePasswordRequest);
+      bool res = await Provider.of<User>(context, listen: false).changePassword(_changePasswordRequest);
       if (res) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -218,22 +219,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _submit,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                      ),
-                      child: _isLoading
-                          ? const CircularProgressIndicator()
-                          : Text(
-                              'Submit'.toUpperCase(),
-                            ),
-                    ),
-                  ),
-                ),
+                SubmitButton(
+                  isLoading: _isLoading,
+                  submit: _submit,
+                )
               ],
             ),
           ),

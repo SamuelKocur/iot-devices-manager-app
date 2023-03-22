@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:iot_devices_manager_app/providers/auth.dart';
+import 'package:iot_devices_manager_app/providers/user.dart';
 
 import 'sensor.dart';
 
