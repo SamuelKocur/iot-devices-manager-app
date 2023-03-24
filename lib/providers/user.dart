@@ -12,10 +12,10 @@ import '../storage/storage_helper.dart';
 
 
 // needed for communication with backend server API
-// const baseApiUrl = 'http://130.162.218.188/api';
-// const imageUrl = 'http://130.162.218.188';
-const baseApiUrl = 'http://192.168.15.30:8000/api';
-const imageUrl = 'http://192.168.15.30:8000';
+const baseApiUrl = 'http://130.162.218.188/api';
+const imageUrl = 'http://130.162.218.188';
+// const baseApiUrl = 'http://192.168.15.30:8000/api';
+// const imageUrl = 'http://192.168.15.30:8000';
 
 class User with ChangeNotifier {
   static const userUrl = '$baseApiUrl/user';
