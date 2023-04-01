@@ -7,14 +7,14 @@ import 'package:http/http.dart' as http;
 import '../models/responses/iot/sensor.dart';
 import 'user.dart';
 
-class IoTDevices with ChangeNotifier {
+class IoTDevicesData with ChangeNotifier {
   static const sensorsUrl = '$baseApiUrl/sensors';
   Map<String, String> requestHeaders;
   List<Sensor> _cachedSensors = [];
   List<Sensor> _favoriteSensors = [];
   List<Sensor> _filteredSensors = [];
 
-  IoTDevices(this.requestHeaders);
+  IoTDevicesData(this.requestHeaders);
 
   void update(Map<String, String> paRequestHeaders) {
     requestHeaders = paRequestHeaders;

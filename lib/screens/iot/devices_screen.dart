@@ -23,7 +23,7 @@ class _DevicesScreenState extends State<DevicesScreen> {
   Future<void> _refreshDevices(BuildContext context) async {
     var selectedTag = _selectedTag == 'all' ? null : _selectedTag;
     try {
-      await Provider.of<IoTDevices>(context, listen: false).fetchAndSetIoTDevices(type: selectedTag);
+      await Provider.of<IoTDevicesData>(context, listen: false).fetchAndSetIoTDevices(type: selectedTag);
     } catch (error) {
       DialogUtils.showErrorDialog(
           context, 'Something went wrong when fetching the devices. Please try again later.');
@@ -85,7 +85,7 @@ class _DevicesScreenState extends State<DevicesScreen> {
                   )
                 : RefreshIndicator(
                     onRefresh: () => _refreshDevices(context),
-                    child: Consumer<IoTDevices>(
+                    child: Consumer<IoTDevicesData>(
                       builder: (ctx, devicesData, _) =>
                           devicesData.sensors.isEmpty
                               ? const NoAvailableIoTDevicesWidget()

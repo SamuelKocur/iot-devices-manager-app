@@ -74,7 +74,7 @@ class _TableWidgetState extends State<TableWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final devices = Provider.of<IoTDevices>(context, listen: false);
+    final devices = Provider.of<IoTDevicesData>(context, listen: false);
     _sensor = devices.getSensorById(widget.sensorId);
     return SingleChildScrollView(
       child: Consumer<FilterResponse>(builder: (ctx, filterResponse, _) {

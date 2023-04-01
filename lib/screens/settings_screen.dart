@@ -30,7 +30,7 @@ class _SettingScreenState extends State<SettingScreen> {
     });
     bool res = false;
     try {
-      res = await Provider.of<User>(context, listen: false).updateAppSettings(_userAppSettings);
+      res = await Provider.of<UserData>(context, listen: false).updateAppSettings(_userAppSettings);
       if (res) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -116,7 +116,7 @@ class _SettingScreenState extends State<SettingScreen> {
   @override
   void initState() {
     super.initState();
-    _userAppSettings = Provider.of<User>(context, listen: false).userAppSettings;
+    _userAppSettings = Provider.of<UserData>(context, listen: false).userAppSettings;
   }
 
   @override

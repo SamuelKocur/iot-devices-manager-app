@@ -17,7 +17,7 @@ const imageUrl = 'http://130.162.218.188';
 // const baseApiUrl = 'http://192.168.15.30:8000/api';
 // const imageUrl = 'http://192.168.15.30:8000';
 
-class User with ChangeNotifier {
+class UserData with ChangeNotifier {
   static const userUrl = '$baseApiUrl/user';
   String? _token;
   DateTime? _expiryDate;

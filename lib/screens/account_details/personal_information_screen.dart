@@ -50,7 +50,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
         firstName: _firstName,
         lastName: _lastName,
       );
-      bool res = await Provider.of<User>(context, listen: false).updateProfile(request);
+      bool res = await Provider.of<UserData>(context, listen: false).updateProfile(request);
       if (res) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -102,7 +102,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    User auth = Provider.of<User>(context, listen: false);
+    UserData auth = Provider.of<UserData>(context, listen: false);
     _firstNameController.text = auth.firstName ?? 'First name';
     _lastNameController.text = auth.lastName ?? 'Last name';
     return Scaffold(

@@ -192,7 +192,7 @@ class _GraphWidgetState extends State<GraphWidget> {
   @override
   void initState() {
     super.initState();
-    _userAppSettings = Provider.of<User>(context, listen: false).userAppSettings;
+    _userAppSettings = Provider.of<UserData>(context, listen: false).userAppSettings;
     _showMinValue = _userAppSettings.graphShowMin;
     _showAvgValue = _userAppSettings.graphShowAvg;
     _showMaxValue = _userAppSettings.graphShowMax;
@@ -200,7 +200,7 @@ class _GraphWidgetState extends State<GraphWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final devices = Provider.of<IoTDevices>(context, listen: false);
+    final devices = Provider.of<IoTDevicesData>(context, listen: false);
     _sensor = devices.getSensorById(widget.sensorId);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

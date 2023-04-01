@@ -34,7 +34,7 @@ class FavoritesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // filtering it from all fetched sensors
-    final iotData = Provider.of<IoTDevices>(context);
+    final iotData = Provider.of<IoTDevicesData>(context);
     final favoriteDevices = iotData.favoriteSensors;
     return iotData.sensors.isEmpty
         ? const NoAvailableIoTDevicesWidget()

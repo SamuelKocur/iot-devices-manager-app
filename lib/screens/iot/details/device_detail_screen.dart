@@ -28,7 +28,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
 
   Future<void> _getDeviceDetail(BuildContext context, int sensorId) async {
     try {
-      _sensor = await Provider.of<IoTDevices>(context, listen: false).getAndReloadSensorById(sensorId) as Sensor;
+      _sensor = await Provider.of<IoTDevicesData>(context, listen: false).getAndReloadSensorById(sensorId) as Sensor;
       _customNameController.text = _sensor.getCustomNameOrName();
     } catch (error) {
       DialogUtils.showErrorDialog(context,
@@ -38,7 +38,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
 
   Future<void> _setDeviceName(String name) async {
     try {
-      await Provider.of<IoTDevices>(context, listen: false).setSensorCustomName(_sensor.id, name);
+      await Provider.of<IoTDevicesData>(context, listen: false).setSensorCustomName(_sensor.id, name);
       setState(() {});
     } catch (error) {
       DialogUtils.showErrorDialog(context, 'Something went wrong when changing name. Please try again later.');
@@ -173,10 +173,10 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                       Icons.add_circle_outline_rounded,
                     ),
                   ),
-                  Consumer<IoTDevices>(
+                  Consumer<IoTDevicesData>(
                     builder: (ctx, devicesData, _) => IconButton(
                       enableFeedback: false,
-                      onPressed: () => Provider.of<IoTDevices>(context, listen: false).toggleFavoriteSensors(_sensor.id),
+                      onPressed: () => Provider.of<IoTDevicesData>(context, listen: false).toggleFavoriteSensors(_sensor.id),
                       icon: Icon(
                         _sensor.isFavorite
                             ? Icons.favorite
@@ -194,7 +194,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                 child: SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.all(12.0),
-                    child: Consumer<IoTDevices>(
+                    child: Consumer<IoTDevicesData>(
                       builder: (ctx, devicesData, _) => Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -224,7 +224,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                                 'Location: ',
                                 style: TextInDetailsScreen.data,
                               ),
-                              Consumer<Locations>(
+                              Consumer<LocationsData>(
                                 builder: (ctx, locations, _) => TextButton(
                                   onPressed: () {
                                     Navigator.of(context).pushNamed(

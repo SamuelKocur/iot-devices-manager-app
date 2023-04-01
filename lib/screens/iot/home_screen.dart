@@ -36,9 +36,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     super.initState();
     initializeDateFormatting();
     _tabController = TabController(initialIndex: 0, length: 3, vsync: this);
-    Provider.of<User>(context, listen: false).fetchAppSettings();
-    Provider.of<Locations>(context, listen: false).fetchAndSetLocations();
-    Provider.of<IoTDevices>(context, listen: false).fetchAndSetIoTDevices();
+    Provider.of<UserData>(context, listen: false).fetchAppSettings();
+    Provider.of<LocationsData>(context, listen: false).fetchAndSetLocations();
+    Provider.of<IoTDevicesData>(context, listen: false).fetchAndSetIoTDevices();
   }
 
   @override

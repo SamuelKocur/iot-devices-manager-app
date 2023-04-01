@@ -13,7 +13,7 @@ class LocationsScreen extends StatelessWidget {
 
   Future<void> _refreshLocations(BuildContext context) async {
     try {
-      await Provider.of<Locations>(context, listen: false)
+      await Provider.of<LocationsData>(context, listen: false)
           .fetchAndSetLocations();
     } catch (error) {
       DialogUtils.showErrorDialog(
@@ -32,7 +32,7 @@ class LocationsScreen extends StatelessWidget {
                 )
               : RefreshIndicator(
                   onRefresh: () => _refreshLocations(context),
-                  child: Consumer<Locations>(
+                  child: Consumer<LocationsData>(
                     builder: (ctx, locationsData, _) =>
                         locationsData.locations.isEmpty
                             ? const NoAvailableIoTDevicesWidget()

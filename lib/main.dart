@@ -34,8 +34,8 @@ class MyApp extends StatelessWidget {
 
   List<SingleChildStatelessWidget> _getProviders(BuildContext context) {
     return [
-      ChangeNotifierProvider<User>(
-        create: (_) => User(),
+      ChangeNotifierProvider<UserData>(
+        create: (_) => UserData(),
       ),
       ChangeNotifierProvider<FilterResponse>(
         create: (_) => FilterResponse(
@@ -43,22 +43,22 @@ class MyApp extends StatelessWidget {
           data: [],
         ),
       ),
-      ChangeNotifierProxyProvider<User, IoTDevices>(
-          create: (ctx) => IoTDevices({}),
+      ChangeNotifierProxyProvider<UserData, IoTDevicesData>(
+          create: (ctx) => IoTDevicesData({}),
           update: (ctx, auth, previousDevices) =>
-              previousDevices ?? IoTDevices({})
+              previousDevices ?? IoTDevicesData({})
                 ..update(auth.requestHeader),
       ),
-      ChangeNotifierProxyProvider<User, Locations>(
+      ChangeNotifierProxyProvider<UserData, LocationsData>(
           create: (ctx) =>
-              Locations({}, Provider.of<IoTDevices>(ctx, listen: false)),
+              LocationsData({}, Provider.of<IoTDevicesData>(ctx, listen: false)),
           update: (ctx, auth, previousLocations) => previousLocations ??
-              Locations({}, Provider.of<IoTDevices>(ctx, listen: false))
+              LocationsData({}, Provider.of<IoTDevicesData>(ctx, listen: false))
             ..update(
               auth.requestHeader,
             ),
       ),
-      ChangeNotifierProxyProvider<User, DataFiltering>(
+      ChangeNotifierProxyProvider<UserData, DataFiltering>(
           create: (ctx) => DataFiltering({}),
           update: (ctx, auth, _) => _ ?? DataFiltering({})
             ..update(auth.requestHeader),
@@ -70,7 +70,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: _getProviders(context),
-      child: Consumer<User>(
+      child: Consumer<UserData>(
         builder: (ctx, auth, child) => MaterialApp(
           title: 'Smart-IoT',
           theme: ThemeData(

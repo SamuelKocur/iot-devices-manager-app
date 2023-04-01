@@ -36,7 +36,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       _isLoading = true;
     });
     try {
-      bool res = await Provider.of<User>(context, listen: false).changePassword(_changePasswordRequest);
+      bool res = await Provider.of<UserData>(context, listen: false).changePassword(_changePasswordRequest);
       if (res) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

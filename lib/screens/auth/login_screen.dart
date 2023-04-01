@@ -34,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
     try {
-      await Provider.of<User>(context, listen: false).login(_loginRequest);
+      await Provider.of<UserData>(context, listen: false).login(_loginRequest);
     } on HttpException catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

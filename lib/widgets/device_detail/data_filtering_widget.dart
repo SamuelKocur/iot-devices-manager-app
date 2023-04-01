@@ -117,7 +117,7 @@ class _FilterDataWidgetState extends State<FilterDataWidget> {
   @override
   void initState() {
     super.initState();
-    DateRangeOptions rangeOption = Provider.of<User>(context, listen: false).userAppSettings.dateRangeOption;
+    DateRangeOptions rangeOption = Provider.of<UserData>(context, listen: false).userAppSettings.dateRangeOption;
     _dateRange = DateRangeOptions.getDateTime(rangeOption.text);
     _dateRangeCurrentValue = rangeOption.text;
   }

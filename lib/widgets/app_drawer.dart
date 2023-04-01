@@ -20,7 +20,7 @@ class _AppDrawerState extends State<AppDrawer> {
 
   void _logOut() {
     try {
-      Provider.of<User>(context, listen: false).logout();
+      Provider.of<UserData>(context, listen: false).logout();
     } catch (error) {
       showDialog(
         context: context,
@@ -79,7 +79,7 @@ class _AppDrawerState extends State<AppDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    final firstName = Provider.of<User>(context).firstName;
+    final firstName = Provider.of<UserData>(context).firstName;
     return Drawer(
       backgroundColor: Colors.white,
       child: SingleChildScrollView(

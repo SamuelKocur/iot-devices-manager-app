@@ -7,13 +7,13 @@ import 'package:iot_devices_manager_app/providers/iot.dart';
 import '../models/responses/iot/location.dart';
 import 'user.dart';
 
-class Locations with ChangeNotifier {
+class LocationsData with ChangeNotifier {
   static const locationsUrl = '$baseApiUrl/locations';
-  final IoTDevices ioTDevicesProvider;
+  final IoTDevicesData ioTDevicesProvider;
   Map<String, String> requestHeaders;
   List<Location> _locations = [];
 
-  Locations(this.requestHeaders, this.ioTDevicesProvider);
+  LocationsData(this.requestHeaders, this.ioTDevicesProvider);
 
   void update(Map<String, String> paRequestHeaders) {
     requestHeaders = paRequestHeaders;

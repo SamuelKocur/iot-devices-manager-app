@@ -35,7 +35,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _isLoading = true;
     });
     try {
-      await Provider.of<User>(context, listen: false).register(_registerRequest);
+      await Provider.of<UserData>(context, listen: false).register(_registerRequest);
     } on HttpException catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

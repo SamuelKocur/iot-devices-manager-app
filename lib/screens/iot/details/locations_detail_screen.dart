@@ -25,7 +25,7 @@ class _LocationDetailScreenState extends State<LocationDetailScreen> {
 
   Future<void> _getLocationDetail(BuildContext context) async {
     try {
-      _locationDetail = await Provider.of<Locations>(context, listen: false).getAndReloadLocationDetailById(_locationId) as LocationDetail;
+      _locationDetail = await Provider.of<LocationsData>(context, listen: false).getAndReloadLocationDetailById(_locationId) as LocationDetail;
       _customNameController.text = _locationDetail.location.getCustomNameOrName();
     } catch (error) {
       DialogUtils.showErrorDialog(context, 'Something went wrong when fetching location information. Please try again later.');
@@ -34,7 +34,7 @@ class _LocationDetailScreenState extends State<LocationDetailScreen> {
 
   Future<void> _setLocationName(String name) async {
     try {
-      await Provider.of<Locations>(context, listen: false).setLocationCustomName(_locationId, name);
+      await Provider.of<LocationsData>(context, listen: false).setLocationCustomName(_locationId, name);
       setState(() {});
     } catch (error) {
       DialogUtils.showErrorDialog(context, 'Something went wrong when changing name. Please try again later.');
@@ -120,7 +120,7 @@ class _LocationDetailScreenState extends State<LocationDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Consumer<Locations>(
+                  Consumer<LocationsData>(
                     builder: (ctx, locationsData, _) => ChangeNotifierProvider.value(
                       value: _locationDetail.location,
                       child: Padding(
@@ -145,7 +145,7 @@ class _LocationDetailScreenState extends State<LocationDetailScreen> {
                     ),
                   ),
                   Expanded(
-                    child: Consumer<Locations>(
+                    child: Consumer<LocationsData>(
                       builder: (ctx, locationsData, _) => ListView.builder(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 15,

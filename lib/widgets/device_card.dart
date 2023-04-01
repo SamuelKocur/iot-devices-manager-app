@@ -62,7 +62,7 @@ class DeviceCard extends StatelessWidget {
             padding: const EdgeInsets.all(12.0),
             child: Column(
               children: [
-                Consumer2<Sensor, Locations>(
+                Consumer2<Sensor, LocationsData>(
                   builder: (ctx, sensor, locations, _) => Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -74,7 +74,7 @@ class DeviceCard extends StatelessWidget {
                         backgroundColor: Colors.white,
                         child: IconButton(
                           enableFeedback: false,
-                          onPressed: () => Provider.of<IoTDevices>(context, listen: false).toggleFavoriteSensors(sensor.id),
+                          onPressed: () => Provider.of<IoTDevicesData>(context, listen: false).toggleFavoriteSensors(sensor.id),
                           icon: Icon(
                             sensor.isFavorite
                                 ? Icons.favorite
@@ -117,7 +117,7 @@ class DeviceCard extends StatelessWidget {
                     ),
                     isLocationsScreen == true
                     ? const SizedBox()
-                    : Consumer<Locations>(
+                    : Consumer<LocationsData>(
                       builder: (ctx, location, _) => ElevatedButton(
                         style: WhiteButtonTheme().style,
                         onPressed: () {

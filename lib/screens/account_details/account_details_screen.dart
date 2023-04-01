@@ -19,7 +19,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
 
   Future<void> _logoutAll() async {
     try {
-      bool res = await Provider.of<User>(context, listen: false).logoutAll();
+      bool res = await Provider.of<UserData>(context, listen: false).logoutAll();
       if (res == true) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -60,7 +60,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
 
   Future<void> _deleteAccount() async {
     try {
-      bool res = await Provider.of<User>(context, listen: true).deleteAccount();
+      bool res = await Provider.of<UserData>(context, listen: true).deleteAccount();
       if (res == true) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
