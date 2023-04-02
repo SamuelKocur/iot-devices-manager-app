@@ -13,10 +13,12 @@ import '../../providers/user.dart';
 class GraphWidget extends StatefulWidget {
   DateRange dateRange;
   int sensorId;
+  bool showData;
 
   GraphWidget({
     required this.sensorId,
     required this.dateRange,
+    this.showData =  true,
     Key? key,
   }) : super(key: key);
 
@@ -128,13 +130,13 @@ class _GraphWidgetState extends State<GraphWidget> {
                 enableAxisAnimation: false,
                 backgroundColor: Colors.white,
                 primaryXAxis: CategoryAxis(),
-                series: _sensor.isBoolSensor() ?
+                series:  _sensor.isBoolSensor() ?
                 <StepLineSeries<DataResponse, String>> [
                   StepLineSeries<DataResponse, String>(
                     animationDuration: _getAnimationDuration(),
                     markerSettings: _getMarketSettings(),
                     color: Theme.of(context).colorScheme.primary,
-                    dataSource: filterResponse.filterJustSelected(),
+                    dataSource: filterResponse.filterJustSelected(widget.showData),
                     xValueMapper: (DataResponse data, _) => DateFormatter.byFormat(data.date, filterResponse.dateFormat),
                     yValueMapper: (DataResponse data, _) => data.totalValue,
                   ),
@@ -145,7 +147,7 @@ class _GraphWidgetState extends State<GraphWidget> {
                       animationDuration: _getAnimationDuration(),
                       markerSettings: _getMarketSettings(),
                       color: Colors.blue,
-                      dataSource: filterResponse.filterJustSelected(),
+                      dataSource: filterResponse.filterJustSelected(widget.showData),
                       xValueMapper: (DataResponse data, _) => DateFormatter.byFormat(data.date, filterResponse.dateFormat),
                       yValueMapper: (DataResponse data, _) => data.minValue,
                     ),
@@ -154,7 +156,7 @@ class _GraphWidgetState extends State<GraphWidget> {
                       animationDuration: _getAnimationDuration(),
                       markerSettings: _getMarketSettings(),
                       color: Theme.of(context).colorScheme.primary,
-                      dataSource: filterResponse.filterJustSelected(),
+                      dataSource: filterResponse.filterJustSelected(widget.showData),
                       xValueMapper: (DataResponse data, _) => DateFormatter.byFormat(data.date, filterResponse.dateFormat),
                       yValueMapper: (DataResponse data, _) => data.avgValue,
                     ),
@@ -163,7 +165,7 @@ class _GraphWidgetState extends State<GraphWidget> {
                       animationDuration: _getAnimationDuration(),
                       markerSettings: _getMarketSettings(),
                       color: Colors.red,
-                      dataSource: filterResponse.filterJustSelected(),
+                      dataSource: filterResponse.filterJustSelected(widget.showData),
                       xValueMapper: (DataResponse data, _) => DateFormatter.byFormat(data.date, filterResponse.dateFormat),
                       yValueMapper: (DataResponse data, _) => data.maxValue,
                     )

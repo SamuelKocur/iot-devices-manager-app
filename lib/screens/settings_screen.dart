@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iot_devices_manager_app/common/date_format.dart';
 import 'package:iot_devices_manager_app/models/app_settings.dart';
+import 'package:iot_devices_manager_app/widgets/common/information_text.dart';
 import 'package:iot_devices_manager_app/widgets/common/submit_button.dart';
 import 'package:provider/provider.dart';
 
@@ -132,6 +133,12 @@ class _SettingScreenState extends State<SettingScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              InformationTextWidget(
+                  'Set default app behaviour'
+              ),
+              const SizedBox(
+                height: 8,
+              ),
               _buildSettingValue(
                   trailingText: 'Date Format:',
                   widget : DropdownButton(
