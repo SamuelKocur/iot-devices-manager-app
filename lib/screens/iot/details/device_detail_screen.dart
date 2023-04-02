@@ -165,12 +165,27 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                     },
                     icon: const Icon(Icons.edit_outlined),
                   ),
-                  IconButton(
-                    onPressed: () {
-                      // Navigator.of(context).pushNamed(SavedRecipesScreen.routeName); // TODO new screen for comparing
-                    },
-                    icon: const Icon(
-                      Icons.add_circle_outline_rounded,
+                  Consumer<IoTDevicesData>(
+                    builder: (ctx, devicesData, _) => IconButton(
+                      onPressed: () {
+                        if (!devicesData.isSensorSelectedForComparison(_sensorId)) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Sensor added to comparison.'),
+                              duration: Duration(seconds: 3),
+                            ),
+                          );
+                        }
+                        devicesData.toggleSelectedForComparison(_sensorId);
+                      },
+                      icon: Icon(
+                        devicesData.isSensorSelectedForComparison(_sensorId)
+                            ? Icons.add_circle
+                            : Icons.add_circle_outline_rounded,
+                        color: devicesData.isSensorSelectedForComparison(_sensorId)
+                            ? Theme.of(context).colorScheme.primary
+                            : Colors.black,
+                      ),
                     ),
                   ),
                   Consumer<IoTDevicesData>(

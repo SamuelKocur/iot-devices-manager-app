@@ -17,3 +17,19 @@ class FilterDataRequest {
     return data;
   }
 }
+
+class FilterComparisonDataRequest {
+  List<int> sensorIds;
+  DateTime dateFrom;
+  DateTime dateTo;
+
+  FilterComparisonDataRequest({
+    required this.sensorIds,
+    required this.dateFrom,
+    required this.dateTo
+  });
+
+  List<FilterDataRequest> toFilterDataRequests() {
+    return sensorIds.map((id) => FilterDataRequest(sensorId: id, dateFrom: dateFrom, dateTo: dateTo)).toList();
+  }
+}

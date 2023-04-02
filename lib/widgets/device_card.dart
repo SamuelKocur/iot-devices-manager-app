@@ -12,10 +12,12 @@ import '../themes/light/elevated_button_theme.dart';
 
 class DeviceCard extends StatelessWidget {
   var isLocationsScreen = false;
+  var isComparisonScreen = false;
 
   DeviceCard({
     Key? key,
     this.isLocationsScreen = false,
+    this.isComparisonScreen = false,
   }) : super(key: key);
 
   Widget _getLatestValueWidget(Sensor sensor, BuildContext context) {
@@ -62,27 +64,55 @@ class DeviceCard extends StatelessWidget {
             padding: const EdgeInsets.all(12.0),
             child: Column(
               children: [
-                Consumer2<Sensor, LocationsData>(
-                  builder: (ctx, sensor, locations, _) => Row(
+                Consumer3<Sensor, LocationsData, IoTDevicesData>(
+                  builder: (ctx, sensor, locations, iotDevices, _) => Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         sensor.getCustomNameOrName(),
                         style: DeviceCardTextStyle.data,
                       ),
-                      CircleAvatar(
-                        backgroundColor: Colors.white,
-                        child: IconButton(
-                          enableFeedback: false,
-                          onPressed: () => Provider.of<IoTDevicesData>(context, listen: false).toggleFavoriteSensors(sensor.id),
-                          icon: Icon(
-                            sensor.isFavorite
-                                ? Icons.favorite
-                                : Icons.favorite_border,
-                            color: sensor.isFavorite ? Colors.pink : Colors.black,
+                      Row(
+                        children: [
+                          if (isComparisonScreen)
+                            CircleAvatar(
+                              backgroundColor: Colors.white,
+                              child: IconButton(
+                                enableFeedback: false,
+                                onPressed: () {
+                                  iotDevices.toggleSelectedForComparison(sensor.id);
+                                },
+                                icon: Icon(
+                                  iotDevices.isSensorSelectedForComparison(sensor.id)
+                                      ? Icons.add_circle
+                                      : Icons.add_circle_outline_rounded,
+                                  color: iotDevices.isSensorSelectedForComparison(sensor.id)
+                                      ? Theme.of(context).colorScheme.primary
+                                      : Colors.black,
+                                ),
+                              ),
+                            ),
+                          if (isComparisonScreen)
+                            const SizedBox(
+                              width: 10,
+                            ),
+                          CircleAvatar(
+                            backgroundColor: Colors.white,
+                            child: IconButton(
+                              enableFeedback: false,
+                              onPressed: () => Provider.of<IoTDevicesData>(context, listen: false).toggleFavoriteSensors(sensor.id),
+                              icon: Icon(
+                                sensor.isFavorite
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                color: sensor.isFavorite
+                                    ? Colors.pink
+                                    : Colors.black,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
+                        ],
+                      )
                     ],
                   ),
                 ),
@@ -116,27 +146,29 @@ class DeviceCard extends StatelessWidget {
                       ],
                     ),
                     isLocationsScreen == true
-                    ? const SizedBox()
-                    : Consumer<LocationsData>(
-                      builder: (ctx, location, _) => ElevatedButton(
-                        style: WhiteButtonTheme().style,
-                        onPressed: () {
-                          Navigator.of(context).pushNamed(
-                            LocationDetailScreen.routeName,
-                            arguments: {
-                              'id': sensor.device.location.id,
-                              'name': sensor.device.location.getCustomNameOrName(),
-                            },
-                          );
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                          child: Text(
-                            sensor.device.location.getCustomNameOrName(),
+                        ? const SizedBox()
+                        : Consumer<LocationsData>(
+                            builder: (ctx, location, _) => ElevatedButton(
+                              style: WhiteButtonTheme().style,
+                              onPressed: () {
+                                Navigator.of(context).pushNamed(
+                                  LocationDetailScreen.routeName,
+                                  arguments: {
+                                    'id': sensor.device.location.id,
+                                    'name': sensor.device.location
+                                        .getCustomNameOrName(),
+                                  },
+                                );
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 15.0),
+                                child: Text(
+                                  sensor.device.location.getCustomNameOrName(),
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
                   ],
                 )
               ],

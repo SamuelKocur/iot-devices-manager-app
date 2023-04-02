@@ -13,6 +13,7 @@ class IoTDevicesData with ChangeNotifier {
   List<Sensor> _cachedSensors = [];
   List<Sensor> _favoriteSensors = [];
   List<Sensor> _filteredSensors = [];
+  List<Sensor> _selectedSensorsForComparison = [];
 
   IoTDevicesData(this.requestHeaders);
 
@@ -32,6 +33,10 @@ class IoTDevicesData with ChangeNotifier {
     return [..._filteredSensors];
   }
 
+  List<Sensor> get selectedSensorsForComparison {
+    return [..._selectedSensorsForComparison];
+  }
+
   Sensor getSensorById(int sensorId) {
     return _cachedSensors.firstWhere((sensor) => sensor.id == sensorId);
   }
@@ -42,6 +47,24 @@ class IoTDevicesData with ChangeNotifier {
         .toList();
   }
 
+  bool isSensorSelectedForComparison(int sensorId) {
+    return _selectedSensorsForComparison.map((sensor) => sensor.id).contains(sensorId);
+  }
+
+  void toggleSelectedForComparison(int sensorId) {
+    if (isSensorSelectedForComparison(sensorId)) {
+      _selectedSensorsForComparison.removeWhere((sensor) => sensor.id == sensorId);
+    } else {
+      var sensor = getSensorById(sensorId);
+      _selectedSensorsForComparison.add(sensor);
+    }
+    notifyListeners();
+  }
+  
+  void removeSensorForComparison() {
+    _selectedSensorsForComparison = [];
+  }
+  
   Future<Sensor?> getAndReloadSensorById(int sensorId) async {
     final url = Uri.parse('$sensorsUrl/$sensorId/');
     try {
@@ -130,6 +153,14 @@ class IoTDevicesData with ChangeNotifier {
     } catch (error) {
       rethrow;
     }
+  }
+
+  Set<String> getSensorTypes() {
+    return _cachedSensors.map((sensor) => sensor.type).toSet();
+  }
+
+  List<Sensor> getSensorsByType(String type) {
+    return _cachedSensors.where((sensor) => sensor.type == type).toList();
   }
 
   void _toggleInAllLists(int sensorId) {

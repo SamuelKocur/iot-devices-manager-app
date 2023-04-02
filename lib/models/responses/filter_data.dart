@@ -15,7 +15,10 @@ class FilterResponse with ChangeNotifier {
       data: List<DataResponse>.from(json["data"].map((data) => DataResponse.fromJson(data)))
   );
 
-  List<DataResponse> filterJustSelected() {
+  List<DataResponse> filterJustSelected(bool showData) {
+    if (!showData) {
+      return [];
+    }
     return data.where((element) => element.selected).toList();
   }
 
@@ -23,6 +26,18 @@ class FilterResponse with ChangeNotifier {
     _rebuild = !_rebuild;
     notifyListeners();
   }
+}
+
+class FilterComparisonResponse {
+  int sensorId;
+  List<DataResponse> data = [];
+  String dateFormat;
+
+  FilterComparisonResponse({
+    required this.sensorId,
+    required this.data,
+    required this.dateFormat,
+  });
 }
 
 class DataResponse with ChangeNotifier {

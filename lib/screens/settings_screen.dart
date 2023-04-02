@@ -139,20 +139,20 @@ class _SettingScreenState extends State<SettingScreen> {
               const SizedBox(
                 height: 8,
               ),
-              _buildSettingValue(
-                  trailingText: 'Date Format:',
-                  widget : DropdownButton(
-                    onChanged: (String? newValue) {
-                      if (newValue != null) {
-                        setState(() {
-                          _userAppSettings.dateFormat = newValue;
-                        });
-                      }
-                    },
-                    items: _dateFormatDropDownMenu(),
-                    value: _userAppSettings.dateFormat,
-                  ),
-              ),
+              // _buildSettingValue(
+              //     trailingText: 'Date Format:',
+              //     widget : DropdownButton(
+              //       onChanged: (String? newValue) {
+              //         if (newValue != null) {
+              //           setState(() {
+              //             _userAppSettings.dateFormat = newValue;
+              //           });
+              //         }
+              //       },
+              //       items: _dateFormatDropDownMenu(),
+              //       value: _userAppSettings.dateFormat,
+              //     ),
+              // ),
               _buildSettingValue(
                 trailingText: 'Get data for:',
                 widget: DropdownButton(

@@ -12,6 +12,8 @@ import 'package:iot_devices_manager_app/screens/auth/forgot_password_screen.dart
 import 'package:iot_devices_manager_app/screens/auth/login_screen.dart';
 import 'package:iot_devices_manager_app/screens/auth/register_screen.dart';
 import 'package:iot_devices_manager_app/screens/common/splash_screen.dart';
+import 'package:iot_devices_manager_app/screens/iot/date_comparison/data_comparison_input_screen.dart';
+import 'package:iot_devices_manager_app/screens/iot/date_comparison/data_comparison_result_screen.dart';
 import 'package:iot_devices_manager_app/screens/iot/details/device_detail_screen.dart';
 import 'package:iot_devices_manager_app/screens/iot/details/locations_detail_screen.dart';
 import 'package:iot_devices_manager_app/screens/iot/home_screen.dart';
@@ -123,6 +125,8 @@ class MyApp extends StatelessWidget {
             HomeScreen.routeName: (ctx) => const HomeScreen(),
             DeviceDetailScreen.routeName: (ctx) => const DeviceDetailScreen(),
             LocationDetailScreen.routeName: (ctx) => LocationDetailScreen(),
+            DataComparisonScreen.routeName: (ctx) => const DataComparisonScreen(),
+            DataComparisonResultScreen.routeName: (ctx) => const DataComparisonResultScreen(),
           },
         ),
       ),

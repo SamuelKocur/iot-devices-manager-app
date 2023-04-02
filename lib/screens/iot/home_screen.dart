@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:iot_devices_manager_app/providers/iot.dart';
 import 'package:iot_devices_manager_app/providers/user.dart';
+import 'package:iot_devices_manager_app/screens/iot/date_comparison/data_comparison_input_screen.dart';
 
 import 'package:iot_devices_manager_app/screens/iot/devices_screen.dart';
 import 'package:iot_devices_manager_app/screens/iot/favorites_screen.dart';
@@ -56,6 +56,16 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           title: const Text(
             'Smart-IoT',
           ),
+          actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed(
+                  DataComparisonScreen.routeName
+                );
+              },
+              icon: const Icon(Icons.scale),
+            ),
+          ],
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(35),
             child: TabBar(

@@ -240,7 +240,7 @@ class UserData with ChangeNotifier {
   }
 
   Future<bool> updateProfile(UpdateProfileRequest request) async {
-    final url = Uri.parse('$userUrl/update-profile/');
+    final url = Uri.parse('$userUrl/profile/');
     try {
       final response = await http.put(
         url,
@@ -271,7 +271,7 @@ class UserData with ChangeNotifier {
   }
 
   Future<void> fetchAppSettings() async {
-    final url = Uri.parse('$userUrl/customize-settings/');
+    final url = Uri.parse('$userUrl/app-settings/');
     try {
       final response = await http.get(url, headers: requestHeader);
       final responseData = (jsonDecode(response.body) ?? <String, dynamic>{})  as Map<String, dynamic>;
@@ -286,7 +286,7 @@ class UserData with ChangeNotifier {
   }
 
   Future<bool> updateAppSettings(UserAppSettings request) async {
-    final url = Uri.parse('$userUrl/customize-settings/');
+    final url = Uri.parse('$userUrl/app-settings/');
     try {
       final response = await http.post(
         url,

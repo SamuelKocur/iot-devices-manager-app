@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:iot_devices_manager_app/models/app_settings.dart';
 import 'package:iot_devices_manager_app/models/responses/filter_data.dart';
 import 'package:iot_devices_manager_app/providers/iot.dart';
@@ -59,45 +60,45 @@ class _GraphWidgetState extends State<GraphWidget> {
   List<Widget> _getGraphCheckBoxes() {
     return _sensor.isBoolSensor()
         ? [
-            _buildCheckbox(
-              value: true,
-              onChanged: null,
-              label: 'Total Value',
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ]
+      _buildCheckbox(
+        value: true,
+        onChanged: null,
+        label: 'Total Value',
+        color: Theme.of(context).colorScheme.primary,
+      ),
+    ]
         : [
-            _buildCheckbox(
-              value: _showMinValue,
-              onChanged: (newVal) {
-                setState(() {
-                  _showMinValue = newVal ?? false;
-                });
-              },
-              label: 'Minimum',
-              color: Colors.blue,
-            ),
-            _buildCheckbox(
-              value: _showAvgValue,
-              onChanged: (newVal) {
-                setState(() {
-                  _showAvgValue = newVal ?? false;
-                });
-              },
-              label: 'Average',
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            _buildCheckbox(
-              value: _showMaxValue,
-              onChanged: (newVal) {
-                setState(() {
-                  _showMaxValue = newVal ?? false;
-                });
-              },
-              label: 'Maximum   ',
-              color: Colors.red,
-            ),
-          ];
+      _buildCheckbox(
+        value: _showMinValue,
+        onChanged: (newVal) {
+          setState(() {
+            _showMinValue = newVal ?? false;
+          });
+        },
+        label: 'Minimum',
+        color: Colors.blue,
+      ),
+      _buildCheckbox(
+        value: _showAvgValue,
+        onChanged: (newVal) {
+          setState(() {
+            _showAvgValue = newVal ?? false;
+          });
+        },
+        label: 'Average',
+        color: Theme.of(context).colorScheme.primary,
+      ),
+      _buildCheckbox(
+        value: _showMaxValue,
+        onChanged: (newVal) {
+          setState(() {
+            _showMaxValue = newVal ?? false;
+          });
+        },
+        label: 'Maximum   ',
+        color: Colors.red,
+      ),
+    ];
   }
 
   MarkerSettings _getMarketSettings() {
@@ -129,44 +130,48 @@ class _GraphWidgetState extends State<GraphWidget> {
               child: SfCartesianChart(
                 enableAxisAnimation: false,
                 backgroundColor: Colors.white,
-                primaryXAxis: CategoryAxis(),
+                primaryXAxis: DateTimeAxis(
+                  dateFormat: DateFormat(filterResponse.dateFormat),
+                  intervalType: DateTimeIntervalType.auto,
+                  labelAlignment: LabelAlignment.center,
+                ),
                 series:  _sensor.isBoolSensor() ?
-                <StepLineSeries<DataResponse, String>> [
-                  StepLineSeries<DataResponse, String>(
+                <StepLineSeries<DataResponse, DateTime>> [
+                  StepLineSeries<DataResponse, DateTime>(
                     animationDuration: _getAnimationDuration(),
                     markerSettings: _getMarketSettings(),
                     color: Theme.of(context).colorScheme.primary,
                     dataSource: filterResponse.filterJustSelected(widget.showData),
-                    xValueMapper: (DataResponse data, _) => DateFormatter.byFormat(data.date, filterResponse.dateFormat),
+                    xValueMapper: (DataResponse data, _) => data.date,
                     yValueMapper: (DataResponse data, _) => data.totalValue,
                   ),
                 ]
-                : <LineSeries<DataResponse, String>>[
+                    : <LineSeries<DataResponse, DateTime>>[
                   if (_showMinValue == true)
-                    LineSeries<DataResponse, String>(
+                    LineSeries<DataResponse, DateTime>(
                       animationDuration: _getAnimationDuration(),
                       markerSettings: _getMarketSettings(),
                       color: Colors.blue,
                       dataSource: filterResponse.filterJustSelected(widget.showData),
-                      xValueMapper: (DataResponse data, _) => DateFormatter.byFormat(data.date, filterResponse.dateFormat),
+                      xValueMapper: (DataResponse data, _) => data.date,
                       yValueMapper: (DataResponse data, _) => data.minValue,
                     ),
                   if (_showAvgValue == true)
-                    LineSeries<DataResponse, String>(
+                    LineSeries<DataResponse, DateTime>(
                       animationDuration: _getAnimationDuration(),
                       markerSettings: _getMarketSettings(),
                       color: Theme.of(context).colorScheme.primary,
                       dataSource: filterResponse.filterJustSelected(widget.showData),
-                      xValueMapper: (DataResponse data, _) => DateFormatter.byFormat(data.date, filterResponse.dateFormat),
+                      xValueMapper: (DataResponse data, _) => data.date,
                       yValueMapper: (DataResponse data, _) => data.avgValue,
                     ),
                   if (_showMaxValue == true)
-                    LineSeries<DataResponse, String>(
+                    LineSeries<DataResponse, DateTime>(
                       animationDuration: _getAnimationDuration(),
                       markerSettings: _getMarketSettings(),
                       color: Colors.red,
                       dataSource: filterResponse.filterJustSelected(widget.showData),
-                      xValueMapper: (DataResponse data, _) => DateFormatter.byFormat(data.date, filterResponse.dateFormat),
+                      xValueMapper: (DataResponse data, _) => data.date,
                       yValueMapper: (DataResponse data, _) => data.maxValue,
                     )
                 ],
