@@ -4,6 +4,7 @@ import 'package:iot_devices_manager_app/screens/account_details/account_details_
 import 'package:iot_devices_manager_app/screens/iot/home_screen.dart';
 import 'package:iot_devices_manager_app/screens/settings_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import './common/error_dialog.dart';
 import '../providers/user.dart';
@@ -77,6 +78,13 @@ class _AppDrawerState extends State<AppDrawer> {
     return freeHeight < 0 ? 0 : freeHeight;
   }
 
+  Future<void> _launchUrl(String url) async {
+    if (!await launchUrl(Uri.parse(url))) {
+      throw Exception('Could not launch $url');
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final firstName = Provider.of<UserData>(context).firstName;
@@ -149,10 +157,15 @@ class _AppDrawerState extends State<AppDrawer> {
             ),
             Padding(
               padding: const EdgeInsets.only(left: 15),
-              child: Text(
-                'www.smart-iot.com',
-                style: Theme.of(context).textTheme.bodyText1,
-              ),
+              child: GestureDetector(
+                onTap: () {
+                  _launchUrl('http://smart-iot.space/');
+                },
+                child: Text(
+                  'www.smart-iot.space',
+                  style: Theme.of(context).textTheme.bodyText1,
+                ),
+              )
             ),
             const SizedBox(
               height: 10,
