@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:iot_devices_manager_app/providers/iot.dart';
 import 'package:iot_devices_manager_app/providers/user.dart';
-import 'package:iot_devices_manager_app/screens/iot/date_comparison/data_comparison_input_screen.dart';
+import 'package:iot_devices_manager_app/screens/iot/data_comparison/data_comparison_input_screen.dart';
 
 import 'package:iot_devices_manager_app/screens/iot/devices_screen.dart';
 import 'package:iot_devices_manager_app/screens/iot/favorites_screen.dart';
